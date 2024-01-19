@@ -154,6 +154,8 @@ y0_limit = 280
 x1_limit = 56
 y1_limit = 280
 
+band_finder_clicked = 0
+
 CURRENT_WARNING = 0.045
 # RELAY_PIN = 20
 # BLUE_LIGHT_PIN = 21
@@ -562,7 +564,7 @@ def main():
                 line2 = image_canvas.create_line(1, line2_value.get(), 750,  line2_value.get(), fill="red", width=1)
 
             def draw_line_3(value=None):
-                global band_line, line1, line2
+                global band_line, line1, line2, band_finder_clicked
                 try:
                     image_canvas.delete(line1)
                 except:
@@ -598,9 +600,11 @@ def main():
                 print("tmp_value: ", tmp_value)
                 print("band_value: ", band_value)
 
-
-                band_entry.delete(0,END);
-                band_entry.insert(0, band_value)
+                if(band_finder_clicked == 0):
+                    band_entry.delete(0,END);
+                    band_entry.insert(0, band_value)
+                else:
+                    band_finder_clicked = 0
 
                 band_line = image_canvas.create_line(1, bandline_value.get(), 750,  bandline_value.get(), fill="green2", width=1)
 
@@ -645,8 +649,10 @@ def main():
                         find_button['state'] = 'normal'
                         band_entry['state'] = 'normal'
             def find_clicked():
-                global a_value, b_value, band_value, band_distance, band_line
-
+                global a_value, b_value, band_value, band_distance, band_line, band_finder_clicked
+                
+                band_finder_clicked = 1
+                
                 if(band_entry.get()==''):
                     msg = messagebox.showwarning("", "You haven't chosen a band yet !")
                 elif(int(band_entry.get())>2000 or int(band_entry.get())<0):
