@@ -163,6 +163,9 @@ CURRENT_WARNING = 0.045
 POWER_LED_PIN = 13
 RELAY_PIN = 26
 BLUE_LIGHT_PIN = 19
+BUZZER_PIN = 6
+RUN_LED_PIN = 16
+SENSOR_PIN = 20
 # GLOBAL VARIABLE - START
 
 # INIT FOLDER - START
@@ -277,8 +280,12 @@ GPIO.setwarnings(False)
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(RELAY_PIN, GPIO.OUT, initial=GPIO.LOW)
 GPIO.setup(BLUE_LIGHT_PIN, GPIO.OUT, initial=GPIO.LOW)
-GPIO.setup(POWER_LED_PIN, GPIO.OUT, initial=GPIO.LOW)
+GPIO.setup(POWER_LED_PIN, GPIO.OUT, initial=GPIO.HIGH)
+GPIO.setup(RUN_LED_PIN, GPIO.OUT, initial=GPIO.LOW) 
+GPIO.setup(BUZZER_PIN, GPIO.OUT, initial=GPIO.LOW)
+GPIO.setup(SENSOR_PIN, GPIO.IN)
 # GPIO - END
+
 
 # ADS1115 - START
 i2c = busio.I2C(3, 2)
@@ -1267,9 +1274,15 @@ def multiStepRunScreen():
             global running
             running = 1
 
+            create_time = strftime("%y-%m-%d")
+            if not os.path.exists("/home/pi/Desktop/VE100 Result/" + create_time):
+                path_name_0 = os.path.join("/home/pi/Desktop/VE100 Result/", create_time)
+                os.mkdir(path_name_0)
+            else:
+                path_name_0 =  "/home/pi/Desktop/VE100 Result/" + create_time
+            
             global folder_name_set
-            folder_name = strftime(folder_name_set + " %y-%m-%d %H.%M.%S")
-            path_name = os.path.join("/home/pi/Desktop/VE100 Result/", folder_name +'/')
+            path_name = os.path.join(path_name_0, folder_name_set +'/')
             os.mkdir(path_name)
 
             if(automail2_is_on):
@@ -1565,6 +1578,12 @@ def multiStepRunScreen():
                         pass
                     GPIO.output(BLUE_LIGHT_PIN, GPIO.LOW)
                     GPIO.output(RELAY_PIN, GPIO.LOW)
+                    GPIO.output(RUN_LED_PIN, GPIO.LOW)
+                    for i in range(0,3):
+                        GPIO.output(BUZZER_PIN, GPIO.HIGH)
+                        sleep(0.5)
+                        GPIO.output(BUZZER_PIN, GPIO.LOW)
+                        sleep(0.5)
                     global running
                     running = 0
 
@@ -1633,10 +1652,18 @@ def multiStepRunScreen():
                                 pass
                     if(int(voltage3_set) > 0):
                         GPIO.output(RELAY_PIN, GPIO.HIGH)
+                        GPIO.output(RUN_LED_PIN, GPIO.HIGH)
                         uart_send(voltage3_set, 1)
                     else:
                         uart_send(0, 0)
                         GPIO.output(RELAY_PIN, GPIO.LOW)
+                        GPIO.output(RUN_LED_PIN, GPIO.LOW)
+                        
+                        for i in range(0,3):
+                            GPIO.output(BUZZER_PIN, GPIO.HIGH)
+                            sleep(1)
+                            GPIO.output(BUZZER_PIN, GPIO.LOW)
+                            sleep(1)
 
                     stage2_is_running = 0
                     stage3_is_running = 1
@@ -1708,10 +1735,18 @@ def multiStepRunScreen():
                                 pass
                     if(int(voltage2_set) > 0):
                         GPIO.output(RELAY_PIN, GPIO.HIGH)
+                        GPIO.output(RUN_LED_PIN, GPIO.HIGH)
                         uart_send(voltage2_set, 1)
                     else:
                         uart_send(0, 0)
                         GPIO.output(RELAY_PIN, GPIO.LOW)
+                        GPIO.output(RUN_LED_PIN, GPIO.LOW)
+                        
+                        for i in range(0,3):
+                            GPIO.output(BUZZER_PIN, GPIO.HIGH)
+                            sleep(1)
+                            GPIO.output(BUZZER_PIN, GPIO.LOW)
+                            sleep(1)
 
                     stage1_is_running = 0
                     stage2_is_running = 1
@@ -1764,10 +1799,18 @@ def multiStepRunScreen():
                                 pass
                     if(int(voltage1_set) > 0):
                         GPIO.output(RELAY_PIN, GPIO.HIGH)
+                        GPIO.output(RUN_LED_PIN, GPIO.HIGH)
                         uart_send(voltage1_set, 1)
                     else:
                         uart_send(0, 0)
                         GPIO.output(RELAY_PIN, GPIO.LOW)
+                        GPIO.output(RUN_LED_PIN, GPIO.LOW)
+                        
+                        for i in range(0,3):
+                            GPIO.output(BUZZER_PIN, GPIO.HIGH)
+                            sleep(1)
+                            GPIO.output(BUZZER_PIN, GPIO.LOW)
+                            sleep(1) 
 
                     stage0_is_running = 0
                     stage1_is_running = 1
@@ -1876,7 +1919,7 @@ def multiStepRunScreen():
                 msgbox = messagebox.askquestion('STOP',' Do you want to go back to Main Screen ?', icon = 'question')
                 if(msgbox=='yes'):
                     uart_send(0, 0)
-                    GPIO.output(POWER_LED_PIN, GPIO.LOW)
+                    GPIO.output(RUN_LED_PIN, GPIO.LOW)
                     GPIO.output(RELAY_PIN, GPIO.LOW)
 
                     if(stop_button['text'] != 'FINISH'):
@@ -1980,7 +2023,7 @@ def multiStepRunScreen():
                     main()
                 else:
                     if(running==1):
-                        GPIO.output(POWER_LED_PIN, GPIO.HIGH)
+                        GPIO.output(RUN_LED_PIN, GPIO.HIGH)
                         GPIO.output(BLUE_LIGHT_PIN, GPIO.HIGH)
                         GPIO.output(RELAY_PIN, GPIO.HIGH)
                         camera_preview()
@@ -1989,7 +2032,7 @@ def multiStepRunScreen():
             stop_button = Button(button_labelframe, bg=BUTTON_BACKGROUND_COLOR_4, bd=1, text='STOP',font=("Courier",13,'bold'), width=16, height=2, command =stop_click)
             stop_button.place(x=427,y=3)
 
-            GPIO.output(POWER_LED_PIN, GPIO.HIGH)
+            GPIO.output(RUN_LED_PIN, GPIO.HIGH)
             GPIO.output(BLUE_LIGHT_PIN, GPIO.HIGH)
             GPIO.output(RELAY_PIN, GPIO.HIGH)
 
@@ -2146,11 +2189,18 @@ def oneStepRunScreen():
         else:
             global running
             running = 1
-
+            
+            create_time = strftime("%y-%m-%d")
+            if not os.path.exists("/home/pi/Desktop/VE100 Result/" + create_time):
+                path_name_0 = os.path.join("/home/pi/Desktop/VE100 Result/", create_time)
+                os.mkdir(path_name_0)
+            else:
+                path_name_0 =  "/home/pi/Desktop/VE100 Result/" + create_time
+            
             global folder_name_set
-            folder_name = strftime(folder_name_set + " %y-%m-%d %H.%M.%S")
-            path_name = os.path.join("/home/pi/Desktop/VE100 Result/", folder_name +'/')
+            path_name = os.path.join(path_name_0, folder_name_set +'/')
             os.mkdir(path_name)
+            
 
             if(automail1_is_on):
                 recipient_email = mail_entry.get()
@@ -2269,7 +2319,7 @@ def oneStepRunScreen():
                     present_voltage_label.config(text="Voltage: 0 V")
                     present_current_label.config(text="")
 
-                    GPIO.output(POWER_LED_PIN, GPIO.LOW)
+                    GPIO.output(RUN_LED_PIN, GPIO.LOW)
                     GPIO.output(RELAY_PIN, GPIO.LOW)
                     uart_send(0,0)
 
@@ -2372,6 +2422,14 @@ def oneStepRunScreen():
 
                     GPIO.output(RELAY_PIN, GPIO.LOW)
                     GPIO.output(BLUE_LIGHT_PIN, GPIO.LOW)
+                    GPIO.output(RUN_LED_PIN, GPIO.LOW)
+                    
+                    for i in range(0,3):
+                        GPIO.output(BUZZER_PIN, GPIO.HIGH)
+                        sleep(0.5)
+                        GPIO.output(BUZZER_PIN, GPIO.LOW)
+                        sleep(0.5)
+                            
                     root.after_cancel(solve_auto_capture)
                     try:
                         camera.stop_preview()
@@ -2427,10 +2485,18 @@ def oneStepRunScreen():
                                 pass
                     if(int(voltage_set) > 0):
                         GPIO.output(RELAY_PIN, GPIO.HIGH)
+                        GPIO.output(RUN_LED_PIN, GPIO.HIGH)
                         uart_send(voltage_set, 1)
                     else:
                         uart_send(0, 0)
                         GPIO.output(RELAY_PIN, GPIO.LOW)
+                        GPIO.output(RUN_LED_PIN, GPIO.LOW)
+                        
+                        for i in range(0,3):
+                            GPIO.output(BUZZER_PIN, GPIO.HIGH)
+                            sleep(1)
+                            GPIO.output(BUZZER_PIN, GPIO.LOW)
+                            sleep(1)
 
                     stage0_is_running = 0
                     stage1_is_running = 1
@@ -2529,7 +2595,7 @@ def oneStepRunScreen():
                                     if(error=='ok'):
                                         pass
 
-                    GPIO.output(POWER_LED_PIN, GPIO.LOW)
+                    GPIO.output(RUN_LED_PIN, GPIO.LOW)
 
                     m0_set = m0_raw
                     s0_set = s0_raw
@@ -2552,7 +2618,7 @@ def oneStepRunScreen():
                     main()
                 else:
                     if(running==1):
-                        GPIO.output(POWER_LED_PIN, GPIO.HIGH)
+                        GPIO.output(RUN_LED_PIN, GPIO.HIGH)
                         GPIO.output(BLUE_LIGHT_PIN, GPIO.HIGH)
                         GPIO.output(RELAY_PIN, GPIO.HIGH)
                         camera_preview()
@@ -2621,7 +2687,7 @@ def oneStepRunScreen():
 
             GPIO.output(BLUE_LIGHT_PIN, GPIO.HIGH)
             GPIO.output(RELAY_PIN, GPIO.HIGH)
-            GPIO.output(POWER_LED_PIN, GPIO.HIGH)
+            GPIO.output(RUN_LED_PIN, GPIO.HIGH)
 
             camera_preview()
             if(voltage0_set != 0):
