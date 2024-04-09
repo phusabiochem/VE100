@@ -1550,7 +1550,7 @@ def multiStepRunScreen():
                     print("account_active:", account_active)
                     print("automail2_is_on:", automail2_is_on)
                     if(account_active and automail2_is_on):
-                        shutil.make_archive(result_path + '/' + folder_name, format='zip', root_dir = path_name)
+                        shutil.make_archive(path_name, format='zip', root_dir = path_name)
                         try:
                             sendmail(recipient_email, folder_name, 'This is an email from EV100 device.', result_path + '/' + folder_name + '.zip')
                         except Exception as e:
@@ -1980,7 +1980,7 @@ def multiStepRunScreen():
                         if(account_active and automail2_is_on):
                             msgbox = messagebox.askquestion('STOP','Do you want to send email ?', icon = 'question')
                             if(msgbox=='yes'):
-                                shutil.make_archive(result_path + '/' + folder_name, format='zip', root_dir = path_name)
+                                shutil.make_archive(path_name, format='zip', root_dir = path_name)
                                 try:
                                     sendmail(recipient_email, folder_name, 'This is an email from EV100 device.', result_path + '/' + folder_name + '.zip')
                                 except Exception as e:
@@ -2397,7 +2397,7 @@ def oneStepRunScreen():
                     s1_label['bg'] = 'grey70'
 
                     if(account_active and automail1_is_on):
-                        shutil.make_archive(result_path + '/' + folder_name, format='zip', root_dir = path_name)
+                        shutil.make_archive(path_name, format='zip', root_dir = path_name)
                         try:
                             sendmail(recipient_email, folder_name, 'This is an email from EV100 device.', result_path + '/' + folder_name + '.zip')
                         except Exception as e:
@@ -2583,7 +2583,7 @@ def oneStepRunScreen():
                         if(account_active and automail2_is_on):
                             msgbox = messagebox.askquestion('STOP','Do you want to send email ?', icon = 'question')
                             if(msgbox=='yes'):
-                                shutil.make_archive(result_path + '/' + folder_name, format='zip', root_dir = path_name)
+                                shutil.make_archive(path_name, format='zip', root_dir = path_name)
                                 try:
                                     sendmail(recipient_email, folder_name, 'This is an email from EV100 device.', result_path + '/' + folder_name + '.zip')
                                 except Exception as e:
