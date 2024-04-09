@@ -91,6 +91,7 @@ SMTP_PORT = 587
 result_path = "/home/pi/Desktop/VE100 Result"
 path_name = ""
 folder_name = ""
+folder_name_set = ""
 recipient_email = "@gmail.com"
 time_capture = 0
 count=1
@@ -343,7 +344,7 @@ def sendmail(recipient, subject, content, zip_file):
 #     emailData.attach(imageData)
 
     with open(zip_file,'rb') as file:
-        emailData.attach(MIMEApplication(file.read(), Name= folder_name + '.zip'))
+        emailData.attach(MIMEApplication(file.read(), Name= folder_name_set + '.zip'))
 
     session = smtplib.SMTP(SMTP_SERVER, SMTP_PORT)
     session.ehlo()
@@ -1234,7 +1235,7 @@ def multiStepRunScreen():
 
     def run1_click():
         global voltage1_set, voltage2_set, voltage3_set, m1_set, s1_set, m2_set, s2_set, m3_set, s3_set, m0_raw, s0_raw, m1_raw, s1_raw, m2_raw, s2_raw, m3_raw, s3_raw, recipient_email, folder_name, path_name
-        global current_measured
+        global current_measured, folder_name_set
         current_measured = 0
 
         if(voltage1_entry.get()=='' or voltage2_entry.get()=='' or voltage3_entry.get()==''):
@@ -1552,7 +1553,7 @@ def multiStepRunScreen():
                     if(account_active and automail2_is_on):
                         shutil.make_archive(path_name, format='zip', root_dir = path_name)
                         try:
-                            sendmail(recipient_email, folder_name, 'This is an email from EV100 device.', result_path + '/' + folder_name + '.zip')
+                            sendmail(recipient_email, folder_name_set, 'This is an email from EV100 device.', path_name_0 + '/' + folder_name_set + '.zip')
                         except Exception as e:
                             try:
                                 camera.stop_preview()
@@ -1982,7 +1983,7 @@ def multiStepRunScreen():
                             if(msgbox=='yes'):
                                 shutil.make_archive(path_name, format='zip', root_dir = path_name)
                                 try:
-                                    sendmail(recipient_email, folder_name, 'This is an email from EV100 device.', result_path + '/' + folder_name + '.zip')
+                                    sendmail(recipient_email, folder_name_set , 'This is an email from EV100 device.', path_name_0 + '/' + folder_name_set + '.zip')
                                 except Exception as e:
                                     try:
                                         camera.stop_preview()
@@ -2173,7 +2174,8 @@ def oneStepRunScreen():
 
     def run1_click():
         global auto_capture_timer_set ,voltage_set, m_set, s_set, m0_set, s0_set ,m_raw, s_raw, m0_raw, s0_raw, recipient_email, folder_name, path_name
-
+        global folder_name_set
+        
         if(voltage_entry.get()==''):
             messagebox.showwarning("","Please enter the voltage !")
         elif((voltage_entry.get().isnumeric())==0 ):
@@ -2399,7 +2401,7 @@ def oneStepRunScreen():
                     if(account_active and automail1_is_on):
                         shutil.make_archive(path_name, format='zip', root_dir = path_name)
                         try:
-                            sendmail(recipient_email, folder_name, 'This is an email from EV100 device.', result_path + '/' + folder_name + '.zip')
+                            sendmail(recipient_email, folder_name_set , 'This is an email from EV100 device.', path_name_0 + '/' + folder_name_set + '.zip')
                         except Exception as e:
                             try:
                                 camera.stop_preview()
@@ -2585,7 +2587,7 @@ def oneStepRunScreen():
                             if(msgbox=='yes'):
                                 shutil.make_archive(path_name, format='zip', root_dir = path_name)
                                 try:
-                                    sendmail(recipient_email, folder_name, 'This is an email from EV100 device.', result_path + '/' + folder_name + '.zip')
+                                    sendmail(recipient_email, folder_name_set, 'This is an email from EV100 device.', path_name_0 + '/' + folder_name_set + '.zip')
                                 except Exception as e:
                                     try:
                                         camera.stop_preview()
