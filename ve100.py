@@ -140,10 +140,10 @@ s4_raw = 0
 
 running = 0
 
-band_crop_x1 = 25
-band_crop_y1 = 203
-band_crop_x2 = 860
-band_crop_y2 = 465
+# band_crop_x1 = 25
+# band_crop_y1 = 203
+# band_crop_x2 = 860
+# band_crop_y2 = 465
 
 scale_percent_1 = 76
 tmp_value_1 = 4
@@ -241,6 +241,49 @@ else:
     fr_voltage = open('/home/pi/VE100/.config.txt')
     divide_voltage = float(fr_voltage.readline())
     print("Divide Voltage: ", divide_voltage)
+
+if not os.path.exists('/home/pi/VE100/coordinates.txt'):
+    fw_coordinate = open('/home/pi/VE100/coordinates.txt', 'x')
+    fw_coordinate.writelines('150\n') # toa do x 17 gieng
+    fw_coordinate.writelines('130\n') # toa do x 26 gieng
+    fw_coordinate.writelines('255\n') # toa do y chung
+    fw_coordinate.close()
+    x_coordinate_17 = 150
+    x_coordinate_26 = 130
+    y_coordinate = 255
+else:
+    fr_coordinate = open('/home/pi/VE100/coordinates.txt')
+    x_coordinate_17 = int(fr_coordinate.readline())
+    x_coordinate_26 = int(fr_coordinate.readline().strip('\n'))
+    y_coordinate = int(fr_coordinate.readline().strip('\n'))
+
+
+if not os.path.exists('/home/pi/VE100/.oldemail.txt'):
+    fw_email = open('/home/pi/VE100/.oldemail.txt', 'x')
+    fw_email.writelines('@gmail.com\n')
+    fw_email.close()
+    autofill_email = "@gmail.com"
+else:
+    fr_email = open('/home/pi/VE100/.oldemail.txt')
+    autofill_email = fr_email.readline()
+
+if not os.path.exists('/home/pi/VE100/bandcrop.txt'):
+    fw_crop = open('/home/pi/VE100/bandcrop.txt', 'x')
+    fw_crop.writelines('25\n')
+    fw_crop.writelines('203\n')
+    fw_crop.writelines('860\n')
+    fw_crop.writelines('465\n')
+    fw_crop.close()
+    band_crop_x1 = 25
+    band_crop_y1 = 203
+    band_crop_x2 = 860
+    band_crop_y2 = 465
+else:
+    fr_crop = open('/home/pi/VE100/bandcrop.txt')
+    band_crop_x1 = int(fr_crop.readline())
+    band_crop_y1 = int(fr_crop.readline().strip('\n'))
+    band_crop_x2 = int(fr_crop.readline().strip('\n'))
+    band_crop_y2 = int(fr_crop.readline().strip('\n'))
 
 # INIT FOLDER - END
 
@@ -1200,7 +1243,7 @@ def multiStepRunScreen():
     mail_label.place(x=130, y=7)
     mail_entry = Entry(automail_labelframe, justify='right',width=28, font=('Courier',13))
     mail_entry.place(x=171,y=7)
-    mail_entry.insert(0,recipient_email)
+    mail_entry.insert(0, autofill_email)
 
     def automail_on_click():
         global automail2_is_on
@@ -1209,7 +1252,7 @@ def multiStepRunScreen():
         automail_off_button['bg'] = MAINMENU_BUTTON_DISABLE_COLOR
         mail_entry['state'] = 'normal'
         if(mail_entry.get()==''):
-            mail_entry.insert(0,recipient_email)
+            mail_entry.insert(0,autofill_email)
         mail_label['fg']='black'
     def automail_off_click():
         global automail2_is_on
@@ -1286,8 +1329,14 @@ def multiStepRunScreen():
             path_name = os.path.join(path_name_0, folder_name_set +'/')
             os.mkdir(path_name)
 
+            global autofill_email
             if(automail2_is_on):
                 recipient_email = mail_entry.get()
+                fw_email = open('/home/pi/VE100/.oldemail.txt', 'w')
+                fw_email.writelines(recipient_email + '\n')
+                fw_email.close()
+                autofill_email = recipient_email
+
             voltage1_set = voltage1_entry.get()
             voltage2_set = voltage2_entry.get()
             voltage3_set = voltage3_entry.get()
@@ -1406,7 +1455,9 @@ def multiStepRunScreen():
 
                 global final_cap, s3_set, m3_set, s0_set, m0_set, stage0_is_running, stage3_is_running, result_path, path_name, camera, solve_s3
                 global current_measured
+                global x_coordinate_17, x_coordinate_26, y_coordinate
 
+        
                 s3_set = s3_set - 1
                 if(s3_set<0):
                     m3_set=m3_set-1
@@ -1459,26 +1510,31 @@ def multiStepRunScreen():
                     try:
                         camera_capture(path_name + 'stage3_result.png')
 
+                        fr_coordinate = open('/home/pi/VE100/coordinates.txt')
+                        x_coordinate_17 = int(fr_coordinate.readline())
+                        x_coordinate_26 = int(fr_coordinate.readline().strip('\n'))
+                        y_coordinate = int(fr_coordinate.readline().strip('\n'))
+
                         edit_img = Image.open(path_name + 'stage3_result.png')
                         img = ImageDraw.Draw(edit_img)
-                        shape = [(1024, 780), (0,550)]
-                        img.rectangle(shape, fill ="lightgray",outline="lightgray")
+                        shape = [(1024, 768), (0,550)]
+                        img.rectangle(shape, fill ="lightgray", outline="lightgray")
                         img_font_1 = ImageFont.truetype("/home/pi/VE100/arial.ttf", 13)
                         img_font_2 = ImageFont.truetype("/home/pi/VE100/arial.ttf", 23)
                         if(num_well==17):
-                            x_coordinate = 150
+                            x_coordinate = x_coordinate_17
                             for i in range(0,17):
-                                img.text((x_coordinate,255), str(i+1), font=img_font_1, fill=(0,255,0))
+                                img.text((x_coordinate,y_coordinate), str(i+1), font=img_font_1, fill=(0,255,0))
                                 x_coordinate += 25
                         else:
-                            x_coordinate = 130
+                            x_coordinate = x_coordinate_26
                             for i in range(0,13):
-                                img.text((x_coordinate,255), str(i+1), font=img_font_1, fill=(0,255,0))
+                                img.text((x_coordinate,y_coordinate), str(i+1), font=img_font_1, fill=(0,255,0))
                                 x_coordinate += 25
 
-                            x_coordinate = 573
+                            x_coordinate = x_coordinate_26 + 443
                             for i in range(13,26):
-                                img.text((x_coordinate,255), str(i+1), font=img_font_1, fill=(0,255,0))
+                                img.text((x_coordinate,y_coordinate), str(i+1), font=img_font_1, fill=(0,255,0))
                                 if(i<18):
                                     x_coordinate += 26
                                 elif(i==18):
@@ -1927,51 +1983,83 @@ def multiStepRunScreen():
                         try:
                             camera_capture(path_name + 'final_result.png')
 
+                            fr_coordinate = open('/home/pi/VE100/coordinates.txt')
+                            x_coordinate_17 = int(fr_coordinate.readline())
+                            x_coordinate_26 = int(fr_coordinate.readline().strip('\n'))
+                            y_coordinate = int(fr_coordinate.readline().strip('\n'))
+
                             edit_img = Image.open(path_name + 'final_result.png')
                             img = ImageDraw.Draw(edit_img)
-                            img_font = ImageFont.truetype("/home/pi/VE100/arial.ttf", 13)
+                            shape = [(1024, 768), (0,550)]
+                            img.rectangle(shape, fill ="lightgray", outline="lightgray")
+                            img_font_1 = ImageFont.truetype("/home/pi/VE100/arial.ttf", 13)
+                            img_font_2 = ImageFont.truetype("/home/pi/VE100/arial.ttf", 23)
                             if(num_well==17):
-                                x_coordinate = 150
+                                x_coordinate = x_coordinate_17
                                 for i in range(0,17):
-                                    img.text((x_coordinate,255), str(i+1), font=img_font, fill=(0,255,0))
+                                    img.text((x_coordinate,y_coordinate), str(i+1), font=img_font_1, fill=(0,255,0))
                                     x_coordinate += 25
                             else:
-                                x_coordinate = 130
+                                x_coordinate = x_coordinate_26
                                 for i in range(0,13):
-                                    img.text((x_coordinate,255), str(i+1), font=img_font, fill=(0,255,0))
+                                    img.text((x_coordinate,y_coordinate), str(i+1), font=img_font_1, fill=(0,255,0))
                                     x_coordinate += 25
 
-                                x_coordinate = 573
+                                x_coordinate = x_coordinate_26 + 443
                                 for i in range(13,26):
-                                    img.text((x_coordinate,255), str(i+1), font=img_font, fill=(0,255,0))
+                                    img.text((x_coordinate,y_coordinate), str(i+1), font=img_font_1, fill=(0,255,0))
                                     if(i<18):
                                         x_coordinate += 26
                                     elif(i==18):
                                         x_coordinate += 30
                                     else:
                                         x_coordinate += 27
+
+                            if(num_well==26):
+                                r1 = 568
+                                r2 = 568
+                                r3 = 568
+                                r4 = 568
+                                r5 = 568
+                                for i in range(0,26):
+                                    if(i<6):
+                                        img.text((32,r1), str(i+1) + '. ' + str(well_name_list_26[i]), font=img_font_2, fill=(0,0,0))
+                                        r1 += 32
+                                    elif(i<12):
+                                        img.text((232,r2), str(i+1) + '. ' + str(well_name_list_26[i]), font=img_font_2, fill=(0,0,0))
+                                        r2 += 32
+                                    elif(i<18):
+                                        img.text((432,r3), str(i+1) + '. ' + str(well_name_list_26[i]), font=img_font_2, fill=(0,0,0))
+                                        r3 += 32
+                                    elif(i<24):
+                                        img.text((632,r4), str(i+1) + '. ' + str(well_name_list_26[i]), font=img_font_2, fill=(0,0,0))
+                                        r4 += 32
+                                    else:
+                                        img.text((832,r5), str(i+1) + '. ' + str(well_name_list_26[i]), font=img_font_2, fill=(0,0,0))
+                                        r5 += 32
+                            else:
+                                pass
                             edit_img.save(path_name + 'edit_img.png','png')
 
-                            wb = Workbook()
-                            sheet = wb.active
+                            # wb = Workbook()
+    #                         sheet = wb.active
+    #                         img = Img(path_name + 'edit_img.png')
+    #                         img.height = 384
+    #                         img.width = 512
+    #                         img.anchor = 'B2'
+    #                         sheet.add_image(img)
 
-                            img = Img(path_name + 'edit_img.png')
-                            img.height = 384
-                            img.width = 512
-                            img.anchor = 'B2'
-                            sheet.add_image(img)
+    #                         sheet.column_dimensions['J'].width = 18
+    #                         sheet.column_dimensions['K'].width = 18
 
-                            sheet.column_dimensions['J'].width = 18
-                            sheet.column_dimensions['K'].width = 18
+    #                         if(num_well==17):
+    #                             pass
+    #                         else:
+    #                             for i in range(0,13):
+    #                                 sheet['J'+ str(i+2)] = str(i+1) + '. ' + str(well_name_list_26[i])
+    #                                 sheet['K'+ str(i+2)] = str(i+14) + '. ' + str(well_name_list_26[i+13])
 
-                            if(num_well==17):
-                                pass
-                            else:
-                                for i in range(0,13):
-                                    sheet['J'+ str(i+2)] = str(i+1) + '. ' + str(well_name_list_26[i])
-                                    sheet['K'+ str(i+2)] = str(i+14) + '. ' + str(well_name_list_26[i+13])
-
-                            wb.save(path_name + 'result.xlsx')
+    #                         wb.save(path_name + 'result.xlsx')
 
                         except Exception as e:
                             error = messagebox.showerror("ERR 03", str(e), icon = "error")
@@ -2139,7 +2227,7 @@ def oneStepRunScreen():
     mail_label.place(x=130, y=7)
     mail_entry = Entry(automail_labelframe, justify='right',width=28, font=('Courier',13))
     mail_entry.place(x=171,y=7)
-    mail_entry.insert(0,recipient_email)
+    mail_entry.insert(0,autofill_email)
 
     def automail_on_click():
         global automail1_is_on
@@ -2148,7 +2236,7 @@ def oneStepRunScreen():
         automail_off_button['bg'] = MAINMENU_BUTTON_DISABLE_COLOR
         mail_entry['state'] = 'normal'
         if(mail_entry.get()==''):
-            mail_entry.insert(0,recipient_email)
+            mail_entry.insert(0,autofill_email)
         mail_label['fg']='black'
     def automail_off_click():
         global automail1_is_on
@@ -2203,9 +2291,14 @@ def oneStepRunScreen():
             path_name = os.path.join(path_name_0, folder_name_set +'/')
             os.mkdir(path_name)
             
-
+            global autofill_email
             if(automail1_is_on):
                 recipient_email = mail_entry.get()
+                fw_email = open('/home/pi/VE100/.oldemail.txt', 'w')
+                fw_email.writelines(recipient_email + '\n')
+                fw_email.close()
+                autofill_email = recipient_email
+
             voltage_set = voltage_entry.get()
             m_set = int(m_entry.get())
             s_set = int(s_entry.get())
@@ -2286,6 +2379,7 @@ def oneStepRunScreen():
 
                 global final_cap, s_set, m_set, s0_set, m0_set, stage0_is_running, stage1_is_running, result_path, path_name, camera, solve_s1, solve_auto_capture
                 global current_measured
+                global x_coordinate_17, x_coordinate_26, y_coordinate
 
                 s_set = s_set - 1
                 if(s_set<0):
@@ -2316,7 +2410,7 @@ def oneStepRunScreen():
                 if(m_set!=-1):
                     solve_s1 = s1_label.after(1000, time_s1)
                 else:
-                    limit1_canvas.place_forget()
+                    limit1_canvas.place_forget()  
                     limit2_canvas.place_forget()
                     present_voltage_label.config(text="Voltage: 0 V")
                     present_current_label.config(text="")
@@ -2333,54 +2427,88 @@ def oneStepRunScreen():
                         pass
 
                     final_cap = 1
+
+
                     try:
                         camera_capture(path_name + 'stage1_result.png')
 
+                        fr_coordinate = open('/home/pi/VE100/coordinates.txt')
+                        x_coordinate_17 = int(fr_coordinate.readline())
+                        x_coordinate_26 = int(fr_coordinate.readline().strip('\n'))
+                        y_coordinate =  int(fr_coordinate.readline().strip('\n'))
+
                         edit_img = Image.open(path_name + 'stage1_result.png')
                         img = ImageDraw.Draw(edit_img)
-                        img_font = ImageFont.truetype("/home/pi/VE100/arial.ttf", 13)
+                        shape = [(1024, 768), (0,550)]
+                        img.rectangle(shape, fill ="lightgray", outline="lightgray")
+                        img_font_1 = ImageFont.truetype("/home/pi/VE100/arial.ttf", 13)
+                        img_font_2 = ImageFont.truetype("/home/pi/VE100/arial.ttf", 23)
                         if(num_well==17):
-                            x_coordinate = 150
+                            x_coordinate = x_coordinate_17
                             for i in range(0,17):
-                                img.text((x_coordinate,255), str(i+1), font=img_font, fill=(0,255,0))
+                                img.text((x_coordinate,y_coordinate), str(i+1), font=img_font_1, fill=(0,255,0))
                                 x_coordinate += 25
                         else:
-                            x_coordinate = 130
+                            x_coordinate = x_coordinate_26
                             for i in range(0,13):
-                                img.text((x_coordinate,255), str(i+1), font=img_font, fill=(0,255,0))
+                                img.text((x_coordinate,y_coordinate), str(i+1), font=img_font_1, fill=(0,255,0))
                                 x_coordinate += 25
 
-                            x_coordinate = 573
+                            x_coordinate = x_coordinate_26 + 443
                             for i in range(13,26):
-                                img.text((x_coordinate,255), str(i+1), font=img_font, fill=(0,255,0))
+                                img.text((x_coordinate,y_coordinate), str(i+1), font=img_font_1, fill=(0,255,0))
                                 if(i<18):
                                     x_coordinate += 26
                                 elif(i==18):
                                     x_coordinate += 30
                                 else:
                                     x_coordinate += 27
+
+                        if(num_well==26):
+                            r1 = 568
+                            r2 = 568
+                            r3 = 568
+                            r4 = 568
+                            r5 = 568
+                            for i in range(0,26):
+                                if(i<6):
+                                    img.text((32,r1), str(i+1) + '. ' + str(well_name_list_26[i]), font=img_font_2, fill=(0,0,0))
+                                    r1 += 32
+                                elif(i<12):
+                                    img.text((232,r2), str(i+1) + '. ' + str(well_name_list_26[i]), font=img_font_2, fill=(0,0,0))
+                                    r2 += 32
+                                elif(i<18):
+                                    img.text((432,r3), str(i+1) + '. ' + str(well_name_list_26[i]), font=img_font_2, fill=(0,0,0))
+                                    r3 += 32
+                                elif(i<24):
+                                    img.text((632,r4), str(i+1) + '. ' + str(well_name_list_26[i]), font=img_font_2, fill=(0,0,0))
+                                    r4 += 32
+                                else:
+                                    img.text((832,r5), str(i+1) + '. ' + str(well_name_list_26[i]), font=img_font_2, fill=(0,0,0))
+                                    r5 += 32
+                        else:
+                            pass
                         edit_img.save(path_name + 'edit_img.png','png')
 
-                        wb = Workbook()
-                        sheet = wb.active
+                        # wb = Workbook()
+#                         sheet = wb.active
+#                         img = Img(path_name + 'edit_img.png')
+#                         img.height = 384
+#                         img.width = 512
+#                         img.anchor = 'B2'
+#                         sheet.add_image(img)
 
-                        img = Img(path_name + 'edit_img.png')
-                        img.height = 384
-                        img.width = 512
-                        img.anchor = 'B2'
-                        sheet.add_image(img)
+#                         sheet.column_dimensions['J'].width = 18
+#                         sheet.column_dimensions['K'].width = 18
 
-                        sheet.column_dimensions['J'].width = 18
-                        sheet.column_dimensions['K'].width = 18
+#                         if(num_well==17):
+#                             pass
+#                         else:
+#                             for i in range(0,13):
+#                                 sheet['J'+ str(i+2)] = str(i+1) + '. ' + str(well_name_list_26[i])
+#                                 sheet['K'+ str(i+2)] = str(i+14) + '. ' + str(well_name_list_26[i+13])
 
-                        if(num_well==17):
-                            pass
-                        else:
-                            for i in range(0,13):
-                                sheet['J'+ str(i+2)] = str(i+1) + '. ' + str(well_name_list_26[i])
-                                sheet['K'+ str(i+2)] = str(i+14) + '. ' + str(well_name_list_26[i+13])
-
-                        wb.save(path_name + 'result.xlsx')
+#                         wb.save(path_name + 'result.xlsx')
 
                     except Exception as e:
                         error = messagebox.showerror("ERR 03", str(e), icon = "error")
@@ -2531,51 +2659,83 @@ def oneStepRunScreen():
                         try:
                             camera_capture(path_name + 'final_result.png')
 
+                            fr_coordinate = open('/home/pi/VE100/coordinates.txt')
+                            x_coordinate_17 = int(fr_coordinate.readline())
+                            x_coordinate_26 = int(fr_coordinate.readline().strip('\n'))
+                            y_coordinate = int(fr_coordinate.readline().strip('\n'))
+
                             edit_img = Image.open(path_name + 'final_result.png')
                             img = ImageDraw.Draw(edit_img)
-                            img_font = ImageFont.truetype("/home/pi/VE100/arial.ttf", 13)
+                            shape = [(1024, 768), (0,550)]
+                            img.rectangle(shape, fill ="lightgray", outline="lightgray")
+                            img_font_1 = ImageFont.truetype("/home/pi/VE100/arial.ttf", 13)
+                            img_font_2 = ImageFont.truetype("/home/pi/VE100/arial.ttf", 23)
                             if(num_well==17):
-                                x_coordinate = 150
+                                x_coordinate = x_coordinate_17
                                 for i in range(0,17):
-                                    img.text((x_coordinate,255), str(i+1), font=img_font, fill=(0,255,0))
+                                    img.text((x_coordinate,y_coordinate), str(i+1), font=img_font_1, fill=(0,255,0))
                                     x_coordinate += 25
                             else:
-                                x_coordinate = 130
+                                x_coordinate = x_coordinate_26
                                 for i in range(0,13):
-                                    img.text((x_coordinate,255), str(i+1), font=img_font, fill=(0,255,0))
+                                    img.text((x_coordinate,y_coordinate), str(i+1), font=img_font_1, fill=(0,255,0))
                                     x_coordinate += 25
 
-                                x_coordinate = 573
+                                x_coordinate = x_coordinate_26 + 443
                                 for i in range(13,26):
-                                    img.text((x_coordinate,255), str(i+1), font=img_font, fill=(0,255,0))
+                                    img.text((x_coordinate,y_coordinate), str(i+1), font=img_font_1, fill=(0,255,0))
                                     if(i<18):
                                         x_coordinate += 26
                                     elif(i==18):
                                         x_coordinate += 30
                                     else:
                                         x_coordinate += 27
+
+                            if(num_well==26):
+                                r1 = 568
+                                r2 = 568
+                                r3 = 568
+                                r4 = 568
+                                r5 = 568
+                                for i in range(0,26):
+                                    if(i<6):
+                                        img.text((32,r1), str(i+1) + '. ' + str(well_name_list_26[i]), font=img_font_2, fill=(0,0,0))
+                                        r1 += 32
+                                    elif(i<12):
+                                        img.text((232,r2), str(i+1) + '. ' + str(well_name_list_26[i]), font=img_font_2, fill=(0,0,0))
+                                        r2 += 32
+                                    elif(i<18):
+                                        img.text((432,r3), str(i+1) + '. ' + str(well_name_list_26[i]), font=img_font_2, fill=(0,0,0))
+                                        r3 += 32
+                                    elif(i<24):
+                                        img.text((632,r4), str(i+1) + '. ' + str(well_name_list_26[i]), font=img_font_2, fill=(0,0,0))
+                                        r4 += 32
+                                    else:
+                                        img.text((832,r5), str(i+1) + '. ' + str(well_name_list_26[i]), font=img_font_2, fill=(0,0,0))
+                                        r5 += 32
+                            else:
+                                pass
                             edit_img.save(path_name + 'edit_img.png','png')
 
-                            wb = Workbook()
-                            sheet = wb.active
+                            # wb = Workbook()
+    #                         sheet = wb.active
+    #                         img = Img(path_name + 'edit_img.png')
+    #                         img.height = 384
+    #                         img.width = 512
+    #                         img.anchor = 'B2'
+    #                         sheet.add_image(img)
 
-                            img = Img(path_name + 'edit_img.png')
-                            img.height = 384
-                            img.width = 512
-                            img.anchor = 'B2'
-                            sheet.add_image(img)
+    #                         sheet.column_dimensions['J'].width = 18
+    #                         sheet.column_dimensions['K'].width = 18
 
-                            sheet.column_dimensions['J'].width = 18
-                            sheet.column_dimensions['K'].width = 18
+    #                         if(num_well==17):
+    #                             pass
+    #                         else:
+    #                             for i in range(0,13):
+    #                                 sheet['J'+ str(i+2)] = str(i+1) + '. ' + str(well_name_list_26[i])
+    #                                 sheet['K'+ str(i+2)] = str(i+14) + '. ' + str(well_name_list_26[i+13])
 
-                            if(num_well==17):
-                                pass
-                            else:
-                                for i in range(0,13):
-                                    sheet['J'+ str(i+2)] = str(i+1) + '. ' + str(well_name_list_26[i])
-                                    sheet['K'+ str(i+2)] = str(i+14) + '. ' + str(well_name_list_26[i+13])
-
-                            wb.save(path_name + 'result.xlsx')
+    #                         wb.save(path_name + 'result.xlsx')
 
                         except Exception as e:
                             error = messagebox.showerror("ERR 03", str(e), icon = "error")
@@ -2638,7 +2798,7 @@ def oneStepRunScreen():
                             m_cap = m0_raw - m0_set
                         if(m_cap<0):
                             m_cap=0
-
+                            
                         output_result = str('stage0_' + '%02d'%m_cap) + ':' + str('%02d'%s_cap) +'.jpg'
                     elif(stage1_is_running):
                         s_cap = s1_raw - s1_set
