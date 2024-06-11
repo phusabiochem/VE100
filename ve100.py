@@ -244,19 +244,37 @@ else:
 
 if not os.path.exists('/home/pi/VE100/coordinates.txt'):
 	fw_coordinate = open('/home/pi/VE100/coordinates.txt', 'x')
-	fw_coordinate.writelines('150\n') # toa do x 17 gieng
-	fw_coordinate.writelines('130\n') # toa do x 26 gieng
-	fw_coordinate.writelines('255\n') # toa do y chung
+	fw_coordinate.writelines('96\n') # toa do x 18 gieng
+	fw_coordinate.writelines('90\n') # toa do x 26 gieng
+	fw_coordinate.writelines('230\n') # toa do y chung
+	fw_coordinate.writelines('49\n') # khoang cach cac gieng 18
+	fw_coordinate.writelines('67\n') # khoang giua 18
+	fw_coordinate.writelines('32\n') # khoang cach cac gieng 26
+	fw_coordinate.writelines('77\n') # khoang giua 26
+	fw_coordinate.writelines('15\n') # font size 18
+	fw_coordinate.writelines('15\n') # font size 26
 	fw_coordinate.close()
-	x_coordinate_17 = 150
-	x_coordinate_26 = 130
-	y_coordinate = 255
+	x_coordinate_17 = 96
+	x_coordinate_26 = 90
+	y_coordinate = 230
+	well_distance_17 = 49
+	pace_17 = 67
+	well_distance_26 = 32
+	pace_26 = 77
+	font_size_17 = 15
+	font_size_26 = 15
+	
 else:
 	fr_coordinate = open('/home/pi/VE100/coordinates.txt')
 	x_coordinate_17 = int(fr_coordinate.readline())
 	x_coordinate_26 = int(fr_coordinate.readline().strip('\n'))
 	y_coordinate = int(fr_coordinate.readline().strip('\n'))
-
+	well_distance_17 = int(fr_coordinate.readline().strip('\n'))
+	pace_17 = int(fr_coordinate.readline().strip('\n'))
+	well_distance_26 = int(fr_coordinate.readline().strip('\n'))
+	pace_26 = int(fr_coordinate.readline().strip('\n'))
+	font_size_17 = int(fr_coordinate.readline().strip('\n'))
+	font_size_26 = int(fr_coordinate.readline().strip('\n'))
 
 if not os.path.exists('/home/pi/VE100/.oldemail.txt'):
 	fw_email = open('/home/pi/VE100/.oldemail.txt', 'x')
@@ -1517,42 +1535,43 @@ def multiStepRunScreen():
 					try:
 						camera_capture(path_name + 'stage3_result.png')
 
-						fr_coordinate = open('/home/pi/VE100/coordinates.txt')
-						x_coordinate_17 = int(fr_coordinate.readline())
-						x_coordinate_26 = int(fr_coordinate.readline().strip('\n'))
-						y_coordinate = int(fr_coordinate.readline().strip('\n'))
+						# ~ fr_coordinate = open('/home/pi/VE100/coordinates.txt')
+						# ~ x_coordinate_17 = int(fr_coordinate.readline())
+						# ~ x_coordinate_26 = int(fr_coordinate.readline().strip('\n'))
+						# ~ y_coordinate = int(fr_coordinate.readline().strip('\n'))
 
 						edit_img = Image.open(path_name + 'stage3_result.png')
 						img = ImageDraw.Draw(edit_img)
 						shape = [(1024, 768), (0,550)]
 						img.rectangle(shape, fill ="lightgray", outline="lightgray")
-						img_font_1 = ImageFont.truetype("/home/pi/VE100/arial.ttf", 13)
+						img_font_1_17 = ImageFont.truetype("/home/pi/VE100/arial.ttf", font_size_17)
+						img_font_1_26 = ImageFont.truetype("/home/pi/VE100/arial.ttf", font_size_26)
 						img_font_2 = ImageFont.truetype("/home/pi/VE100/arial.ttf", 23)
 						if(num_well==17):
 							x_coordinate = x_coordinate_17
 							for i in range(0,9):
-								img.text((x_coordinate,y_coordinate), str(i+1), font=img_font_1, fill=(0,255,0))
-								x_coordinate += 38
+								img.text((x_coordinate,y_coordinate), str(i+1), font=img_font_1_17, fill=(0,255,0))
+								x_coordinate += well_distance_17
 
-							x_coordinate = x_coordinate_17 + 443
+							x_coordinate = x_coordinate - well_distance_17 + pace_17
 							for i in range(9,18):
-								img.text((x_coordinate,y_coordinate), str(i+1), font=img_font_1, fill=(0,255,0))
-								x_coordinate += 38
+								img.text((x_coordinate,y_coordinate), str(i+1), font=img_font_1_17, fill=(0,255,0))
+								x_coordinate += well_distance_17
 						else:
 							x_coordinate = x_coordinate_26
 							for i in range(0,13):
-								img.text((x_coordinate,y_coordinate), str(i+1), font=img_font_1, fill=(0,255,0))
-								x_coordinate += 25
+								img.text((x_coordinate,y_coordinate), str(i+1), font=img_font_1_26, fill=(0,255,0))
+								x_coordinate += well_distance_26
 
-							x_coordinate = x_coordinate_26 + 443
+							x_coordinate = x_coordinate - well_distance_26 + pace_26
 							for i in range(13,26):
-								img.text((x_coordinate,y_coordinate), str(i+1), font=img_font_1, fill=(0,255,0))
-								if(i<18):
-									x_coordinate += 26
-								elif(i==18):
-									x_coordinate += 30
-								else:
-									x_coordinate += 27
+								img.text((x_coordinate,y_coordinate), str(i+1), font=img_font_1_26, fill=(0,255,0))
+								# ~ if(i<18):
+									# ~ x_coordinate += 26
+								# ~ elif(i==18):
+									# ~ x_coordinate += 30
+								# ~ else:
+								x_coordinate += well_distance_26
 
 						if(num_well==26):
 							r1 = 568
@@ -2009,42 +2028,43 @@ def multiStepRunScreen():
 						try:
 							camera_capture(path_name + 'final_result.png')
 
-							fr_coordinate = open('/home/pi/VE100/coordinates.txt')
-							x_coordinate_17 = int(fr_coordinate.readline())
-							x_coordinate_26 = int(fr_coordinate.readline().strip('\n'))
-							y_coordinate = int(fr_coordinate.readline().strip('\n'))
+							# ~ fr_coordinate = open('/home/pi/VE100/coordinates.txt')
+							# ~ x_coordinate_17 = int(fr_coordinate.readline())
+							# ~ x_coordinate_26 = int(fr_coordinate.readline().strip('\n'))
+							# ~ y_coordinate = int(fr_coordinate.readline().strip('\n'))
 
 							edit_img = Image.open(path_name + 'final_result.png')
 							img = ImageDraw.Draw(edit_img)
 							shape = [(1024, 768), (0,550)]
 							img.rectangle(shape, fill ="lightgray", outline="lightgray")
-							img_font_1 = ImageFont.truetype("/home/pi/VE100/arial.ttf", 13)
+							img_font_1_17 = ImageFont.truetype("/home/pi/VE100/arial.ttf", font_size_17)
+							img_font_1_26 = ImageFont.truetype("/home/pi/VE100/arial.ttf", font_size_26)
 							img_font_2 = ImageFont.truetype("/home/pi/VE100/arial.ttf", 23)
 							if(num_well==17):
 								x_coordinate = x_coordinate_17
 								for i in range(0,9):
-									img.text((x_coordinate,y_coordinate), str(i+1), font=img_font_1, fill=(0,255,0))
-									x_coordinate += 38
+									img.text((x_coordinate,y_coordinate), str(i+1), font=img_font_1_17, fill=(0,255,0))
+									x_coordinate += well_distance_17
 
-								x_coordinate = x_coordinate_17 + 443
+								x_coordinate = x_coordinate - well_distance_17 + pace_17
 								for i in range(9,18):
-									img.text((x_coordinate,y_coordinate), str(i+1), font=img_font_1, fill=(0,255,0))
-									x_coordinate += 38
+									img.text((x_coordinate,y_coordinate), str(i+1), font=img_font_1_17, fill=(0,255,0))
+									x_coordinate += well_distance_17
 							else:
 								x_coordinate = x_coordinate_26
 								for i in range(0,13):
-									img.text((x_coordinate,y_coordinate), str(i+1), font=img_font_1, fill=(0,255,0))
-									x_coordinate += 25
+									img.text((x_coordinate,y_coordinate), str(i+1), font=img_font_1_26, fill=(0,255,0))
+									x_coordinate += well_distance_26
 
-								x_coordinate = x_coordinate_26 + 443
+								x_coordinate = x_coordinate - well_distance_26 + pace_26 
 								for i in range(13,26):
-									img.text((x_coordinate,y_coordinate), str(i+1), font=img_font_1, fill=(0,255,0))
-									if(i<18):
-										x_coordinate += 26
-									elif(i==18):
-										x_coordinate += 30
-									else:
-										x_coordinate += 27
+									img.text((x_coordinate,y_coordinate), str(i+1), font=img_font_1_26, fill=(0,255,0))
+									# ~ if(i<18):
+										# ~ x_coordinate += 26
+									# ~ elif(i==18):
+										# ~ x_coordinate += 30
+									# ~ else:
+									x_coordinate += well_distance_26
 
 							if(num_well==26):
 								r1 = 568
@@ -2477,42 +2497,43 @@ def oneStepRunScreen():
 					try:
 						camera_capture(path_name + 'stage1_result.png')
 
-						fr_coordinate = open('/home/pi/VE100/coordinates.txt')
-						x_coordinate_17 = int(fr_coordinate.readline())
-						x_coordinate_26 = int(fr_coordinate.readline().strip('\n'))
-						y_coordinate =  int(fr_coordinate.readline().strip('\n'))
+						# ~ fr_coordinate = open('/home/pi/VE100/coordinates.txt')
+						# ~ x_coordinate_17 = int(fr_coordinate.readline())
+						# ~ x_coordinate_26 = int(fr_coordinate.readline().strip('\n'))
+						# ~ y_coordinate =  int(fr_coordinate.readline().strip('\n'))
 
 						edit_img = Image.open(path_name + 'stage1_result.png')
 						img = ImageDraw.Draw(edit_img)
 						shape = [(1024, 768), (0,550)]
 						img.rectangle(shape, fill ="lightgray", outline="lightgray")
-						img_font_1 = ImageFont.truetype("/home/pi/VE100/arial.ttf", 13)
+						img_font_1_17 = ImageFont.truetype("/home/pi/VE100/arial.ttf", font_size_17)
+						img_font_1_26 = ImageFont.truetype("/home/pi/VE100/arial.ttf", font_size_26)
 						img_font_2 = ImageFont.truetype("/home/pi/VE100/arial.ttf", 23)
 						if(num_well==17):
 							x_coordinate = x_coordinate_17
 							for i in range(0,9):
-								img.text((x_coordinate,y_coordinate), str(i+1), font=img_font_1, fill=(0,255,0))
-								x_coordinate += 38
+								img.text((x_coordinate,y_coordinate), str(i+1), font=img_font_1_17, fill=(0,255,0))
+								x_coordinate += well_distance_17
 
-							x_coordinate = x_coordinate_17 + 443
+							x_coordinate = x_coordinate - well_distance_17 + pace_17
 							for i in range(9,18):
-								img.text((x_coordinate,y_coordinate), str(i+1), font=img_font_1, fill=(0,255,0))
-								x_coordinate += 38
+								img.text((x_coordinate,y_coordinate), str(i+1), font=img_font_1_17, fill=(0,255,0))
+								x_coordinate += well_distance_17
 						else:
 							x_coordinate = x_coordinate_26
 							for i in range(0,13):
-								img.text((x_coordinate,y_coordinate), str(i+1), font=img_font_1, fill=(0,255,0))
-								x_coordinate += 25
+								img.text((x_coordinate,y_coordinate), str(i+1), font=img_font_1_26, fill=(0,255,0))
+								x_coordinate += well_distance_26
 
-							x_coordinate = x_coordinate_26 + 443
+							x_coordinate = x_coordinate - well_distance_26 + pace_26
 							for i in range(13,26):
-								img.text((x_coordinate,y_coordinate), str(i+1), font=img_font_1, fill=(0,255,0))
-								if(i<18):
-									x_coordinate += 26
-								elif(i==18):
-									x_coordinate += 30
-								else:
-									x_coordinate += 27
+								img.text((x_coordinate,y_coordinate), str(i+1), font=img_font_1_26, fill=(0,255,0))
+								# ~ if(i<18):
+									# ~ x_coordinate += 26
+								# ~ elif(i==18):
+									# ~ x_coordinate += 30
+								# ~ else:
+								x_coordinate += well_distance_26
 
 						if(num_well==26):
 							r1 = 568
@@ -2724,42 +2745,43 @@ def oneStepRunScreen():
 						try:
 							camera_capture(path_name + 'final_result.png')
 
-							fr_coordinate = open('/home/pi/VE100/coordinates.txt')
-							x_coordinate_17 = int(fr_coordinate.readline())
-							x_coordinate_26 = int(fr_coordinate.readline().strip('\n'))
-							y_coordinate = int(fr_coordinate.readline().strip('\n'))
+							# ~ fr_coordinate = open('/home/pi/VE100/coordinates.txt')
+							# ~ x_coordinate_17 = int(fr_coordinate.readline())
+							# ~ x_coordinate_26 = int(fr_coordinate.readline().strip('\n'))
+							# ~ y_coordinate = int(fr_coordinate.readline().strip('\n'))
 
 							edit_img = Image.open(path_name + 'final_result.png')
 							img = ImageDraw.Draw(edit_img)
 							shape = [(1024, 768), (0,550)]
 							img.rectangle(shape, fill ="lightgray", outline="lightgray")
-							img_font_1 = ImageFont.truetype("/home/pi/VE100/arial.ttf", 13)
+							img_font_1_17 = ImageFont.truetype("/home/pi/VE100/arial.ttf", font_size_17)
+							img_font_1_26 = ImageFont.truetype("/home/pi/VE100/arial.ttf", font_size_26)
 							img_font_2 = ImageFont.truetype("/home/pi/VE100/arial.ttf", 23)
 							if(num_well==17):
 								x_coordinate = x_coordinate_17
 								for i in range(0,9):
-									img.text((x_coordinate,y_coordinate), str(i+1), font=img_font_1, fill=(0,255,0))
-									x_coordinate += 38
+									img.text((x_coordinate,y_coordinate), str(i+1), font=img_font_1_17, fill=(0,255,0))
+									x_coordinate += well_distance_17
 
-								x_coordinate = x_coordinate_17 + 443
+								x_coordinate = x_coordinate - well_distance_17 + pace_17
 								for i in range(9,18):
-									img.text((x_coordinate,y_coordinate), str(i+1), font=img_font_1, fill=(0,255,0))
-									x_coordinate += 38
+									img.text((x_coordinate,y_coordinate), str(i+1), font=img_font_1_17, fill=(0,255,0))
+									x_coordinate += well_distance_17
 							else:
 								x_coordinate = x_coordinate_26
 								for i in range(0,13):
-									img.text((x_coordinate,y_coordinate), str(i+1), font=img_font_1, fill=(0,255,0))
-									x_coordinate += 25
+									img.text((x_coordinate,y_coordinate), str(i+1), font=img_font_1_26, fill=(0,255,0))
+									x_coordinate += well_distance_26
 
-								x_coordinate = x_coordinate_26 + 443
+								x_coordinate = x_coordinate - well_distance_26 + pace_26
 								for i in range(13,26):
-									img.text((x_coordinate,y_coordinate), str(i+1), font=img_font_1, fill=(0,255,0))
-									if(i<18):
-										x_coordinate += 26
-									elif(i==18):
-										x_coordinate += 30
-									else:
-										x_coordinate += 27
+									img.text((x_coordinate,y_coordinate), str(i+1), font=img_font_1_26, fill=(0,255,0))
+									# ~ if(i<18):
+										# ~ x_coordinate += 26
+									# ~ elif(i==18):
+										# ~ x_coordinate += 30
+									# ~ else:
+									x_coordinate += well_distance_26
 
 							if(num_well==26):
 								r1 = 568
