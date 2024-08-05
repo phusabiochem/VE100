@@ -1,5 +1,4 @@
 # !/usr/bin/python3
-
 # IMPORT MODULE - START
 from tkinter import *
 from tkinter import messagebox
@@ -43,6 +42,8 @@ import board
 import busio
 import adafruit_ads1x15.ads1115 as ADS
 from adafruit_ads1x15.analog_in import AnalogIn
+
+import adafruit_ds1307
 
 max_voltage = 120
 divide_voltage = 4.68
@@ -305,6 +306,29 @@ else:
 
 # INIT FOLDER - END
 
+##### ACTIVE CODE HANDLE - START #####
+try:
+	fr = open("/home/pi/VE100/active_code.txt","r")
+	active_code = fr.readline().strip('\n')
+except:
+	active_code = '0'
+##### ACTIVE CODE HANDLE - END #####
+##### TRIAL EXPIRED HANDLE - START #####
+try:
+	fr = open("/var/tmp/.trial_info.txt","r")
+	trial_date = int(fr.readline())
+	trial_month = int(fr.readline())
+	trial_year = int(fr.readline())
+	trial_30days_extend_code = fr.readline().strip('\n')
+	trial_full_active_code = fr.readline().strip('\n')
+except:
+	trial_date = 0
+	trial_month = 0
+	trial_year = 0
+	trial_30days_extend_code = ''
+	trial_full_active_code = ''
+##### TRIAL EXPIRED HANDLE - END #####
+
 # UART - START
 ser = serial.Serial(
 	port = '/dev/serial0',
@@ -353,6 +377,10 @@ GPIO.setup(SENSOR_PIN, GPIO.IN)
 i2c = busio.I2C(3, 2)
 ads = ADS.ADS1115(i2c)
 # ADS1115 - END
+
+# DS1307
+i2c_2 = board.I2C()
+rtc = adafruit_ds1307.DS1307(i2c_2)
 
 # CAMERA - START
 camera = PiCamera(framerate = 3, sensor_mode = 3)
@@ -427,6 +455,10 @@ root.attributes('-fullscreen', True)
 root.resizable(False,False)
 # MAIN WINDOW - END
 
+trial_work_frame = Frame(root, bg = 'white')
+menu_labelframe =  LabelFrame(root, bg=TASKBAR_BACKGROUND_COLOR, width=799, height=65)
+active_code_entry = Entry(trial_work_frame, width=30, font=('Courier',14))
+
 # SCROLL FRAME - START
 class ScrollableFrame(Frame):
 	def __init__(self, container, *args, **kwargs):
@@ -456,7 +488,8 @@ def main():
 	line1_value = DoubleVar()
 	line2_value = DoubleVar()
 	bandline_value = DoubleVar()
-
+	
+	global menu_labelframe
 	menu_labelframe =  LabelFrame(root, bg=TASKBAR_BACKGROUND_COLOR, width=799, height=65)
 	menu_labelframe.place(x=1,y=415)
 
@@ -3018,5 +3051,108 @@ def oneStepRunScreen():
 
 # RUN FUNTION - END
 
-main()
+def trial_expired():
+	global trial_work_frame
+	trial_work_frame = Frame(root, bg = 'white')
+	trial_work_frame.pack(expand=TRUE)
+	
+	expire_info1_label = Label(trial_work_frame,
+								text = "Your trial has expired",
+								font = ('Courier',15),
+								bg = 'white',
+								fg = 'red')
+	expire_info1_label.grid(row=0, column=0, pady=30, sticky=EW)
+	
+	expire_info2_label = Label(trial_work_frame,
+							text = " Please enter the activation code to continue using the application",
+							font = ('Courier',12),
+							bg = 'white',
+							fg = 'grey35')
+	expire_info2_label.grid(row=2, column=0, pady=10, padx=30, sticky=W)
+	
+	global active_code_entry
+	active_code_entry = Entry(trial_work_frame, width=30, font=('Courier',14))
+	active_code_entry.grid(row=3, column=0, pady=10, padx=30, sticky=EW)
+	
+	activate_button = Button(trial_work_frame,
+							text = "Activate",
+							font = ('Helvetica', 10),
+							# width = SWITCH_PAGE_BUTTON_WIDTH,
+							# height = SWITCH_PAGE_BUTTON_HEIGHT,
+							bg = "grey80",
+							fg = "black",
+							borderwidth = 0,
+							command = activate_clicked)
+	activate_button.grid(row=4, column=0, ipady=10, pady=30, padx=300, sticky=EW)
+		
+		
+def trial_30days_extend():
+	dt = rtc.datetime
+	recent_date = dt.tm_mday
+	recent_month = dt.tm_mon
+	recent_year = dt.tm_year
+	
+	time1 = trial_year*365 + trial_month*30 + trial_date
+	time2 = recent_year*365 + recent_month*30 + recent_date
+	number_of_days = time2 - time1
+	print("Trial days left: ", 30 - number_of_days, '/30')
+	
+	if(number_of_days > 30):
+		trial_days = 30
+		trial_expired()
+		
+def trial_7days():
+	dt = rtc.datetime
+	recent_date = dt.tm_mday
+	recent_month = dt.tm_mon
+	recent_year = dt.tm_year
+	
+	time1 = trial_year*365 + trial_month*30 + trial_date
+	time2 = recent_year*365 + recent_month*30 + recent_date
+	number_of_days = time2 - time1
+	print("Trial days left: ", 7 - number_of_days, '/7')
+	
+	if(number_of_days > 7):
+		trial_days = 7
+		trial_expired()
+		
+def activate_clicked():
+	active_code_enter = active_code_entry.get()
+	if(active_code_enter != ''):
+		if(active_code_enter == trial_30days_extend_code):
+			if(active_code != trial_30days_extend_code):
+				fw = open("/home/pi/VE100/active_code.txt",'w')	
+				fw.writelines(active_code_enter + '\n')
+				messagebox.showinfo("","Your trial package has been extended to 30 days.")
+				try:
+					trial_work_frame.destroy()
+				except:
+					pass
+				main()
+			else:
+				messagebox.showerror("","Your code is invalid, please try again.")
+		elif(active_code_enter == trial_full_active_code):
+			fw = open("/home/pi/VE100/active_code.txt",'w')	
+			fw.writelines(active_code_enter + '\n')
+			messagebox.showinfo("","Successful activation.")
+			try:
+				trial_work_frame.destroy()
+			except:
+				pass
+			main()
+		else:
+			messagebox.showerror("","Your code is invalid, please try again.")
+	else:
+		messagebox.showwarning("","Please enter activation code.")
+
+
+
+if(active_code == trial_full_active_code):
+	main()
+elif(active_code == trial_30days_extend_code):
+	trial_30days_extend()
+else:
+	trial_7days()
+
+
 root.mainloop()
