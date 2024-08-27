@@ -311,7 +311,7 @@ try:
 	fr = open("/home/pi/VE100/active_code.txt","r")
 	active_code = fr.readline().strip('\n')
 except:
-	active_code = '0'
+	active_code = 'phusa@full'
 ##### ACTIVE CODE HANDLE - END #####
 ##### TRIAL EXPIRED HANDLE - START #####
 try:
@@ -325,8 +325,8 @@ except:
 	trial_date = 0
 	trial_month = 0
 	trial_year = 0
-	trial_30days_extend_code = ''
-	trial_full_active_code = ''
+	trial_30days_extend_code = 'phusa@30'
+	trial_full_active_code = 'phusa@full'
 ##### TRIAL EXPIRED HANDLE - END #####
 
 # UART - START
@@ -523,21 +523,45 @@ def main():
 			folder_name_entry.focus_set()
 
 			def ok_clicked():
-				global folder_name_set, multi_chosen, single_chosen
-
-				if(folder_name_entry.get() == ''):
-					messagebox.showwarning("","Please enter Folder Name !")
+				global folder_name_set, multi_chosen, single_chosen, path_name
+				
+				create_time = strftime("%y-%m-%d")
+				if not os.path.exists("/home/pi/Desktop/VE100 Result/" + create_time):
+					path_name_0 = os.path.join("/home/pi/Desktop/VE100 Result/", create_time)
+					os.mkdir(path_name_0)
 				else:
+					path_name_0 =  "/home/pi/Desktop/VE100 Result/" + create_time
+				
+				if(os.path.exists(path_name_0 + "/" + folder_name_entry.get())):
+					msg = messagebox.askquestion("", "This folder already exists, do you want to overwrite it ?")
+					if(msg == 'yes'):
+						folder_name_set = folder_name_entry.get()
+						path_name = os.path.join(path_name_0, folder_name_set +'/')
+						shutil.rmtree(path_name)
+						os.mkdir(path_name)
+						
+						try:
+							naming_labelframe.destroy()
+						except:
+							pass
+						single_chosen = 0
+						multi_chosen = 1
+						menu_labelframe.destroy()
+						namingScreen()
+				else:
+					folder_name_set = folder_name_entry.get()
+					path_name = os.path.join(path_name_0, folder_name_set +'/')
+					os.mkdir(path_name)
+					
 					try:
 						naming_labelframe.destroy()
 					except:
 						pass
-					single_chosen = 1
-					multi_chosen = 0
-					folder_name_set = folder_name_entry.get()
+					single_chosen = 0
+					multi_chosen = 1
 					menu_labelframe.destroy()
 					namingScreen()
-
+						
 			def cancel_clicked():
 				folder_labelframe.place_forget()
 
@@ -574,18 +598,42 @@ def main():
 			folder_name_entry.focus_set()
 
 			def ok_clicked():
-				global folder_name_set, multi_chosen, single_chosen
-				if(folder_name_entry.get() == ''):
-					messagebox.showwarning("","Please enter Folder Name !")
+				global folder_name_set, multi_chosen, single_chosen, path_name
+				
+				create_time = strftime("%y-%m-%d")
+				if not os.path.exists("/home/pi/Desktop/VE100 Result/" + create_time):
+					path_name_0 = os.path.join("/home/pi/Desktop/VE100 Result/", create_time)
+					os.mkdir(path_name_0)
 				else:
+					path_name_0 =  "/home/pi/Desktop/VE100 Result/" + create_time
+				
+				if(os.path.exists(path_name_0 + "/" + folder_name_entry.get())):
+					msg = messagebox.askquestion("", "This folder already exists, do you want to overwrite it ?")
+					if(msg == 'yes'):
+						folder_name_set = folder_name_entry.get()
+						path_name = os.path.join(path_name_0, folder_name_set +'/')
+						shutil.rmtree(path_name)
+						os.mkdir(path_name)
+						
+						try:
+							naming_labelframe.destroy()
+						except:
+							pass
+						single_chosen = 0
+						multi_chosen = 1
+						menu_labelframe.destroy()
+						namingScreen()
+				else:
+					folder_name_set = folder_name_entry.get()
+					path_name = os.path.join(path_name_0, folder_name_set +'/')
+					os.mkdir(path_name)
+					
 					try:
 						naming_labelframe.destroy()
 					except:
 						pass
 					single_chosen = 0
 					multi_chosen = 1
-
-					folder_name_set = folder_name_entry.get()
 					menu_labelframe.destroy()
 					namingScreen()
 
@@ -1375,17 +1423,6 @@ def multiStepRunScreen():
 		else:
 			global running
 			running = 1
-
-			create_time = strftime("%y-%m-%d")
-			if not os.path.exists("/home/pi/Desktop/VE100 Result/" + create_time):
-				path_name_0 = os.path.join("/home/pi/Desktop/VE100 Result/", create_time)
-				os.mkdir(path_name_0)
-			else:
-				path_name_0 =  "/home/pi/Desktop/VE100 Result/" + create_time
-			
-			global folder_name_set
-			path_name = os.path.join(path_name_0, folder_name_set +'/')
-			os.mkdir(path_name)
 
 			global autofill_email
 			if(automail2_is_on):
@@ -2360,7 +2397,7 @@ def oneStepRunScreen():
 
 	def run1_click():
 		global auto_capture_timer_set ,voltage_set, m_set, s_set, m0_set, s0_set ,m_raw, s_raw, m0_raw, s0_raw, recipient_email, folder_name, path_name
-		global folder_name_set
+		global folder_name_set, path_name
 		
 		if(voltage_entry.get()==''):
 			messagebox.showwarning("","Please enter the voltage !")
@@ -2377,17 +2414,6 @@ def oneStepRunScreen():
 		else:
 			global running
 			running = 1
-			
-			create_time = strftime("%y-%m-%d")
-			if not os.path.exists("/home/pi/Desktop/VE100 Result/" + create_time):
-				path_name_0 = os.path.join("/home/pi/Desktop/VE100 Result/", create_time)
-				os.mkdir(path_name_0)
-			else:
-				path_name_0 =  "/home/pi/Desktop/VE100 Result/" + create_time
-			
-			global folder_name_set
-			path_name = os.path.join(path_name_0, folder_name_set +'/')
-			os.mkdir(path_name)
 			
 			global autofill_email
 			if(automail1_is_on):
