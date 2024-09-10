@@ -374,8 +374,8 @@ GPIO.setup(SENSOR_PIN, GPIO.IN)
 
 
 # ADS1115 - START
-# ~ i2c = busio.I2C(3, 2)
-# ~ ads = ADS.ADS1115(i2c)
+i2c = busio.I2C(3, 2)
+ads = ADS.ADS1115(i2c)
 # ADS1115 - END
 
 # DS1307
