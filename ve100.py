@@ -524,20 +524,34 @@ def main():
 
 			def ok_clicked():
 				global folder_name_set, multi_chosen, single_chosen, path_name
+				if(folder_name_entry.get() != ''):
 				
-				create_time = strftime("%y-%m-%d")
-				if not os.path.exists("/home/pi/Desktop/VE100 Result/" + create_time):
-					path_name_0 = os.path.join("/home/pi/Desktop/VE100 Result/", create_time)
-					os.mkdir(path_name_0)
-				else:
-					path_name_0 =  "/home/pi/Desktop/VE100 Result/" + create_time
-				
-				if(os.path.exists(path_name_0 + "/" + folder_name_entry.get())):
-					msg = messagebox.askquestion("", "This folder already exists, do you want to overwrite it ?")
-					if(msg == 'yes'):
+					create_time = strftime("%y-%m-%d")
+					if not os.path.exists("/home/pi/Desktop/VE100 Result/" + create_time):
+						path_name_0 = os.path.join("/home/pi/Desktop/VE100 Result/", create_time)
+						os.mkdir(path_name_0)
+					else:
+						path_name_0 =  "/home/pi/Desktop/VE100 Result/" + create_time
+					
+					if(os.path.exists(path_name_0 + "/" + folder_name_entry.get())):
+						msg = messagebox.askquestion("", "This folder already exists, do you want to overwrite it ?")
+						if(msg == 'yes'):
+							folder_name_set = folder_name_entry.get()
+							path_name = os.path.join(path_name_0, folder_name_set +'/')
+							shutil.rmtree(path_name)
+							os.mkdir(path_name)
+							
+							try:
+								naming_labelframe.destroy()
+							except:
+								pass
+							single_chosen = 1
+							multi_chosen = 0
+							menu_labelframe.destroy()
+							namingScreen()
+					else:
 						folder_name_set = folder_name_entry.get()
 						path_name = os.path.join(path_name_0, folder_name_set +'/')
-						shutil.rmtree(path_name)
 						os.mkdir(path_name)
 						
 						try:
@@ -548,19 +562,10 @@ def main():
 						multi_chosen = 0
 						menu_labelframe.destroy()
 						namingScreen()
+						
 				else:
-					folder_name_set = folder_name_entry.get()
-					path_name = os.path.join(path_name_0, folder_name_set +'/')
-					os.mkdir(path_name)
-					
-					try:
-						naming_labelframe.destroy()
-					except:
-						pass
-					single_chosen = 1
-					multi_chosen = 0
-					menu_labelframe.destroy()
-					namingScreen()
+					messagebox.showwarning("","Please enter the folder name !")
+						
 						
 			def cancel_clicked():
 				folder_labelframe.place_forget()
@@ -600,19 +605,33 @@ def main():
 			def ok_clicked():
 				global folder_name_set, multi_chosen, single_chosen, path_name
 				
-				create_time = strftime("%y-%m-%d")
-				if not os.path.exists("/home/pi/Desktop/VE100 Result/" + create_time):
-					path_name_0 = os.path.join("/home/pi/Desktop/VE100 Result/", create_time)
-					os.mkdir(path_name_0)
-				else:
-					path_name_0 =  "/home/pi/Desktop/VE100 Result/" + create_time
-				
-				if(os.path.exists(path_name_0 + "/" + folder_name_entry.get())):
-					msg = messagebox.askquestion("", "This folder already exists, do you want to overwrite it ?")
-					if(msg == 'yes'):
+				if(folder_name_entry.get() != ""):
+					create_time = strftime("%y-%m-%d")
+					if not os.path.exists("/home/pi/Desktop/VE100 Result/" + create_time):
+						path_name_0 = os.path.join("/home/pi/Desktop/VE100 Result/", create_time)
+						os.mkdir(path_name_0)
+					else:
+						path_name_0 =  "/home/pi/Desktop/VE100 Result/" + create_time
+					
+					if(os.path.exists(path_name_0 + "/" + folder_name_entry.get())):
+						msg = messagebox.askquestion("", "This folder already exists, do you want to overwrite it ?")
+						if(msg == 'yes'):
+							folder_name_set = folder_name_entry.get()
+							path_name = os.path.join(path_name_0, folder_name_set +'/')
+							shutil.rmtree(path_name)
+							os.mkdir(path_name)
+							
+							try:
+								naming_labelframe.destroy()
+							except:
+								pass
+							single_chosen = 0
+							multi_chosen = 1
+							menu_labelframe.destroy()
+							namingScreen()
+					else:
 						folder_name_set = folder_name_entry.get()
 						path_name = os.path.join(path_name_0, folder_name_set +'/')
-						shutil.rmtree(path_name)
 						os.mkdir(path_name)
 						
 						try:
@@ -624,18 +643,8 @@ def main():
 						menu_labelframe.destroy()
 						namingScreen()
 				else:
-					folder_name_set = folder_name_entry.get()
-					path_name = os.path.join(path_name_0, folder_name_set +'/')
-					os.mkdir(path_name)
-					
-					try:
-						naming_labelframe.destroy()
-					except:
-						pass
-					single_chosen = 0
-					multi_chosen = 1
-					menu_labelframe.destroy()
-					namingScreen()
+					messagebox.showwarning("","Please enter Please enter the folder name !")
+				
 
 			def cancel_clicked():
 				folder_labelframe.place_forget()
