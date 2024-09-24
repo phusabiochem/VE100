@@ -523,7 +523,7 @@ def main():
 			folder_name_entry.focus_set()
 
 			def ok_clicked():
-				global folder_name_set, multi_chosen, single_chosen, path_name
+				global folder_name_set, multi_chosen, single_chosen, path_name, path_name_0
 				if(folder_name_entry.get() != ''):
 				
 					create_time = strftime("%y-%m-%d")
@@ -603,7 +603,7 @@ def main():
 			folder_name_entry.focus_set()
 
 			def ok_clicked():
-				global folder_name_set, multi_chosen, single_chosen, path_name
+				global folder_name_set, multi_chosen, single_chosen, path_name, path_name_0
 				
 				if(folder_name_entry.get() != ""):
 					create_time = strftime("%y-%m-%d")
@@ -2215,7 +2215,8 @@ def multiStepRunScreen():
 							if(msgbox=='yes'):
 								shutil.make_archive(path_name, format='zip', root_dir = path_name)
 								try:
-									sendmail(recipient_email, folder_name_set , 'This is an email from EV100 device.', path_name_0 + '/' + folder_name_set + '.zip')
+									sendmail(recipient_email, folder_name_set , 'This is an email from EV100 device.', 
+									 + '/' + folder_name_set + '.zip')
 								except Exception as e:
 									try:
 										camera.stop_preview()
