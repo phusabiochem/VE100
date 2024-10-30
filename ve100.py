@@ -482,6 +482,9 @@ class ScrollableFrame(Frame):
 		scrollbar.pack(side="right", fill="y")
 # SCROLL FRAME - END
 
+account_labelframe = LabelFrame() 
+run_labelframe = LabelFrame()
+viewresults_labelframe = LabelFrame()
 
 # MAIN FUNCTION- START
 def main():
@@ -498,6 +501,16 @@ def main():
 		viewresults_button['bg'] = MAINMENU_BUTTON_DISABLE_COLOR
 		account_button['bg'] = MAINMENU_BUTTON_DISABLE_COLOR
 #         exit_button['bg'] = MAINMENU_BUTTON_DISABLE_COLOR
+		
+		global account_labelframe, run_labelframe, viewresults_labelframe
+		try:
+			viewresults_labelframe.destroy()
+		except:
+			pass
+		try:
+			account_labelframe.destroy()
+		except:
+			pass
 
 		run_labelframe =  LabelFrame(root, bg=MAIN_BACKGROUND_COLOR, width=799, height=419)
 		run_labelframe.place(x=1,y=1)
@@ -679,6 +692,16 @@ def main():
 		viewresults_button['bg'] = MAINMENU_BUTTON_ENABLE_COLOR
 		account_button['bg'] = MAINMENU_BUTTON_DISABLE_COLOR
 #         exit_button['bg'] = MAINMENU_BUTTON_DISABLE_COLOR
+
+		global account_labelframe, run_labelframe, viewresults_labelframe
+		try:
+			run_labelframe.destroy()
+		except:
+			pass
+		try:
+			account_labelframe.destroy()
+		except:
+			pass
 
 		viewresults_labelframe =  LabelFrame(root, bg=MAIN_BACKGROUND_COLOR, width=799, height=419)
 		viewresults_labelframe.place(x=1,y=1)
@@ -898,6 +921,16 @@ def main():
 		account_button['bg'] = MAINMENU_BUTTON_ENABLE_COLOR
 #         exit_button['bg'] = MAINMENU_BUTTON_DISABLE_COLOR
 
+		global account_labelframe, run_labelframe, viewresults_labelframe
+		try:
+			run_labelframe.destroy()
+		except:
+			pass
+		try:
+			viewresults_labelframe.destroy()
+		except:
+			pass
+
 		account_labelframe =  LabelFrame(root, bg=MAIN_BACKGROUND_COLOR, width=799, height=419)
 		account_labelframe.place(x=1,y=1)
 		account_label =  Label(account_labelframe, text="ACCOUNT", font=("Courier",14, "bold"), fg=LABEL_TEXT_COLOR_1, bg=LABEL_BACKGROUND_COLOR_1, width=72, height=2)
@@ -1031,6 +1064,7 @@ def main():
 
 		msg = messagebox.askquestion("EXIT", "Do you want to close Application ?")
 		if(msg=='yes'):
+			os._exit(0)
 			root.destroy()
 
 
