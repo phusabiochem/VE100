@@ -247,35 +247,48 @@ if not os.path.exists('/home/pi/VE100/coordinates.txt'):
 	fw_coordinate = open('/home/pi/VE100/coordinates.txt', 'x')
 	fw_coordinate.writelines('96\n') # toa do x 18 gieng
 	fw_coordinate.writelines('90\n') # toa do x 26 gieng
+	fw_coordinate.writelines('84\n') # toa do x 34 gieng
 	fw_coordinate.writelines('230\n') # toa do y chung
 	fw_coordinate.writelines('49\n') # khoang cach cac gieng 18
 	fw_coordinate.writelines('67\n') # khoang giua 18
 	fw_coordinate.writelines('32\n') # khoang cach cac gieng 26
 	fw_coordinate.writelines('77\n') # khoang giua 26
+	fw_coordinate.writelines('20\n') # khoang cach cac gieng 34
+	fw_coordinate.writelines('77\n') # khoang giua 34
 	fw_coordinate.writelines('15\n') # font size 18
 	fw_coordinate.writelines('15\n') # font size 26
+	fw_coordinate.writelines('12\n') # font size 34
 	fw_coordinate.close()
+
 	x_coordinate_17 = 96
 	x_coordinate_26 = 90
+	x_coordinate_34 = 84
 	y_coordinate = 230
 	well_distance_17 = 49
 	pace_17 = 67
 	well_distance_26 = 32
 	pace_26 = 77
+	well_distance_34 = 20
+	pace_34 = 77
 	font_size_17 = 15
 	font_size_26 = 15
+	font_size_34 = 12
 	
 else:
 	fr_coordinate = open('/home/pi/VE100/coordinates.txt')
 	x_coordinate_17 = int(fr_coordinate.readline())
 	x_coordinate_26 = int(fr_coordinate.readline().strip('\n'))
+	x_coordinate_34 = int(fr_coordinate.readline().strip('\n'))
 	y_coordinate = int(fr_coordinate.readline().strip('\n'))
 	well_distance_17 = int(fr_coordinate.readline().strip('\n'))
 	pace_17 = int(fr_coordinate.readline().strip('\n'))
 	well_distance_26 = int(fr_coordinate.readline().strip('\n'))
 	pace_26 = int(fr_coordinate.readline().strip('\n'))
+	well_distance_34 = int(fr_coordinate.readline().strip('\n'))
+	pace_34 = int(fr_coordinate.readline().strip('\n'))
 	font_size_17 = int(fr_coordinate.readline().strip('\n'))
 	font_size_26 = int(fr_coordinate.readline().strip('\n'))
+	font_size_34 = int(fr_coordinate.readline().strip('\n'))
 
 if not os.path.exists('/home/pi/VE100/.oldemail.txt'):
 	fw_email = open('/home/pi/VE100/.oldemail.txt', 'x')
@@ -383,7 +396,7 @@ i2c_2 = board.I2C()
 rtc = adafruit_ds1307.DS1307(i2c_2)
 
 # CAMERA - START
-camera = PiCamera(framerate = 3, sensor_mode = 3)
+camera = PiCamera(framerate = 1, sensor_mode = 3)
 camera.resolution = (1024,768)
 camera.rotation = 0
 # camera.brightness = 53
@@ -410,7 +423,7 @@ def camera_capture(output):
 
 def camera_preview():
 	camera.iso = 0
-	camera.shutter_speed = 2000000
+	camera.shutter_speed = 5000000
 	camera.exposure_mode = 'off'
 	camera.start_preview(alpha=255, fullscreen=False, window=(234, -10, 505, 450))
 # CAMERA - END
@@ -482,11 +495,12 @@ class ScrollableFrame(Frame):
 		scrollbar.pack(side="right", fill="y")
 # SCROLL FRAME - END
 
+
+# MAIN FUNCTION- START
 account_labelframe = LabelFrame() 
 run_labelframe = LabelFrame()
 viewresults_labelframe = LabelFrame()
 
-# MAIN FUNCTION- START
 def main():
 	line1_value = DoubleVar()
 	line2_value = DoubleVar()
@@ -501,7 +515,7 @@ def main():
 		viewresults_button['bg'] = MAINMENU_BUTTON_DISABLE_COLOR
 		account_button['bg'] = MAINMENU_BUTTON_DISABLE_COLOR
 #         exit_button['bg'] = MAINMENU_BUTTON_DISABLE_COLOR
-		
+
 		global account_labelframe, run_labelframe, viewresults_labelframe
 		try:
 			viewresults_labelframe.destroy()
@@ -538,7 +552,6 @@ def main():
 			def ok_clicked():
 				global folder_name_set, multi_chosen, single_chosen, path_name, path_name_0
 				if(folder_name_entry.get() != ''):
-				
 					create_time = strftime("%y-%m-%d")
 					if not os.path.exists("/home/pi/Desktop/VE100 Result/" + create_time):
 						path_name_0 = os.path.join("/home/pi/Desktop/VE100 Result/", create_time)
@@ -1064,7 +1077,6 @@ def main():
 
 		msg = messagebox.askquestion("EXIT", "Do you want to close Application ?")
 		if(msg=='yes'):
-			os._exit(0)
 			root.destroy()
 
 
@@ -1111,7 +1123,6 @@ def namingScreen():
 					width=39,
 					borderwidth = 0)
 	well0_entry_list_17.grid(row=0, column=1, sticky=EW, padx=1, pady=1)
-
 
 	well_entry_list_17 = list(range(18))
 	number_button_list_17 = list(range(18))
@@ -1225,23 +1236,120 @@ def namingScreen():
 #         well_entry_list_26[1].focus_set()
 #     well_entry_list_26[i].bind("<Return>", ok_clicked_0)
 
+	wells_34_labelframe = LabelFrame(naming_labelframe, bg=MAIN_BACKGROUND_COLOR, width=792, height=315)
+	wells_frame = ScrollableFrame(wells_34_labelframe)
+	wells_frame.pack(pady=5)
+	number0_button_list_34 = Button(wells_frame.scrollable_frame,
+					fg = 'black',
+					font = ("Courier",12),
+					text= 'No',
+					width=2,
+					borderwidth = 0)
+	number0_button_list_34.grid(row=0, column=0, sticky=EW, padx=1, pady=1)
+	well0_entry_list_34 = Button(wells_frame.scrollable_frame,
+					fg = 'black',
+					font = ("Courier",12),
+					text= 'Well Name',
+					width=39,
+					borderwidth = 0)
+	well0_entry_list_34.grid(row=0, column=1, sticky=EW, padx=1, pady=1)
+	well_entry_list_34 = list(range(34))
+	number_button_list_34 = list(range(34))
+	n=0
+	for i in range(0,34):
+		number_button_list_34[i] = Button(wells_frame.scrollable_frame,
+						fg = 'black',
+						font = ("Courier",12),
+						text= str(i+1),
+						width=2,
+						borderwidth = 0)
+		number_button_list_34[i].grid(row=i+1, column=0, sticky=EW, padx=1, pady=1)
+
+		well_entry_list_34[i] = Entry(wells_frame.scrollable_frame,
+								width=20,
+								justify='left',
+								font=('Courier',15))
+		well_entry_list_34[i].grid(row=i+1, column=1, sticky=EW, padx=1, pady=1)
+
+#     def check_entry_1():
+#         if(len(well_entry_list_17[i].get().strip()) > 10):
+#             messagebox.showwarning("","Well name must be less than 15 characters.")
+#         else:
+#             well_entry_list_26[1].focus_set()
+
+	well_entry_list_34[0].focus_set()
+	well_entry_list_34[0].bind("<Return>",lambda funct:well_entry_list_34[1].focus_set())
+	well_entry_list_34[1].bind("<Return>",lambda funct:well_entry_list_34[2].focus_set())
+	well_entry_list_34[2].bind("<Return>",lambda funct:well_entry_list_34[3].focus_set())
+	well_entry_list_34[3].bind("<Return>",lambda funct:well_entry_list_34[4].focus_set())
+	well_entry_list_34[4].bind("<Return>",lambda funct:well_entry_list_34[5].focus_set())
+	well_entry_list_34[5].bind("<Return>",lambda funct:well_entry_list_34[6].focus_set())
+	well_entry_list_34[6].bind("<Return>",lambda funct:well_entry_list_34[7].focus_set())
+	well_entry_list_34[7].bind("<Return>",lambda funct:well_entry_list_34[8].focus_set())
+	well_entry_list_34[8].bind("<Return>",lambda funct:well_entry_list_34[9].focus_set())
+	well_entry_list_34[9].bind("<Return>",lambda funct:well_entry_list_34[10].focus_set())
+	well_entry_list_34[10].bind("<Return>",lambda funct:well_entry_list_34[11].focus_set())
+	well_entry_list_34[11].bind("<Return>",lambda funct:well_entry_list_34[12].focus_set())
+	well_entry_list_34[12].bind("<Return>",lambda funct:well_entry_list_34[13].focus_set())
+	well_entry_list_34[13].bind("<Return>",lambda funct:well_entry_list_34[14].focus_set())
+	well_entry_list_34[14].bind("<Return>",lambda funct:well_entry_list_34[15].focus_set())
+	well_entry_list_34[15].bind("<Return>",lambda funct:well_entry_list_34[16].focus_set())
+	well_entry_list_34[16].bind("<Return>",lambda funct:well_entry_list_34[17].focus_set())
+	well_entry_list_34[17].bind("<Return>",lambda funct:well_entry_list_34[18].focus_set())
+	well_entry_list_34[18].bind("<Return>",lambda funct:well_entry_list_34[19].focus_set())
+	well_entry_list_34[19].bind("<Return>",lambda funct:well_entry_list_34[20].focus_set())
+	well_entry_list_34[20].bind("<Return>",lambda funct:well_entry_list_34[21].focus_set())
+	well_entry_list_34[21].bind("<Return>",lambda funct:well_entry_list_34[22].focus_set())
+	well_entry_list_34[22].bind("<Return>",lambda funct:well_entry_list_34[23].focus_set())
+	well_entry_list_34[23].bind("<Return>",lambda funct:well_entry_list_34[24].focus_set())
+	well_entry_list_34[24].bind("<Return>",lambda funct:well_entry_list_34[25].focus_set())
+	well_entry_list_34[25].bind("<Return>",lambda funct:well_entry_list_34[26].focus_set())
+	well_entry_list_34[26].bind("<Return>",lambda funct:well_entry_list_34[27].focus_set())
+	well_entry_list_34[27].bind("<Return>",lambda funct:well_entry_list_34[28].focus_set())
+	well_entry_list_34[28].bind("<Return>",lambda funct:well_entry_list_34[29].focus_set())
+	well_entry_list_34[29].bind("<Return>",lambda funct:well_entry_list_34[30].focus_set())
+	well_entry_list_34[30].bind("<Return>",lambda funct:well_entry_list_34[31].focus_set())
+	well_entry_list_34[31].bind("<Return>",lambda funct:well_entry_list_34[32].focus_set())
+	well_entry_list_34[32].bind("<Return>",lambda funct:well_entry_list_34[33].focus_set())
+	well_entry_list_34[33].bind("<Return>",lambda funct:well_entry_list_34[0].focus_set())
+
+
 	def check_option(eventObject):
 		if(number_of_wells_combobox.current() == 0):
 			try:
 				wells_26_labelframe.place_forget()
 			except:
 				pass
+			try:
+				wells_34_labelframe.place_forget()
+			except:
+				pass
 			wells_17_labelframe.place(x=152,y=85)
 
+		elif(number_of_wells_combobox.current() == 1):
+			try:
+				wells_17_labelframe.place_forget()
+			except:
+				pass
+			try:
+				wells_34_labelframe.place_forget()
+			except:
+				pass
+			wells_26_labelframe.place(x=152,y=85)
 		else:
 			try:
 				wells_17_labelframe.place_forget()
 			except:
 				pass
-			wells_26_labelframe.place(x=152,y=85)
+			try:
+				wells_26_labelframe.place_forget()
+			except:
+				pass
+			wells_34_labelframe.place(x=152,y=85)
+
 
 	number_of_wells_combobox = ttk.Combobox(naming_labelframe, state = "readonly", width = 10, textvariable = n)
-	number_of_wells_combobox['values'] = ('18 wells', '26 wells')
+	number_of_wells_combobox['values'] = ('18 wells', '26 wells', '34 wells')
 	number_of_wells_combobox.place(x=180, y=53)
 	number_of_wells_combobox.current(1)
 	# number_of_wells_combobox['state'] = 'disable'
@@ -1252,7 +1360,7 @@ def namingScreen():
 		naming_labelframe.destroy()
 		main()
 	def next_click():
-		global well_name_list_17, well_name_list_26, num_well
+		global well_name_list_17, well_name_list_26, well_name_list_34, num_well
 		err = 0
 		if(number_of_wells_combobox.current() == 0):
 			num_well = 17
@@ -1264,7 +1372,7 @@ def namingScreen():
 					break
 				else:
 					well_name_list_17[i] = well_entry_list_17[i].get().strip()
-		else:
+		elif(number_of_wells_combobox.current() == 1):
 			num_well = 26
 			well_name_list_26 = list(range(26))
 			for i in range(0,26):
@@ -1274,6 +1382,17 @@ def namingScreen():
 					break
 				else:
 					well_name_list_26[i] = well_entry_list_26[i].get().strip()
+		else:
+			num_well = 34
+			well_name_list_34 = list(range(34))
+			for i in range(0,34):
+				if(len(well_entry_list_34[i].get().strip()) > 12):
+					messagebox.showwarning("","Well name must be less than 12 characters.\n[Well " + str(i+1) + ']')
+					err = 1
+					break
+				else:
+					well_name_list_34[i] = well_entry_list_34[i].get().strip()
+
 		if(err==0):
 			if(multi_chosen == 1):
 				multiStepRunScreen()
@@ -1659,7 +1778,9 @@ def multiStepRunScreen():
 						img.rectangle(shape, fill ="lightgray", outline="lightgray")
 						img_font_1_17 = ImageFont.truetype("/home/pi/VE100/arial.ttf", font_size_17)
 						img_font_1_26 = ImageFont.truetype("/home/pi/VE100/arial.ttf", font_size_26)
+						img_font_1_34 = ImageFont.truetype("/home/pi/VE100/arial.ttf", font_size_34)
 						img_font_2 = ImageFont.truetype("/home/pi/VE100/arial.ttf", 23)
+						img_font_3 = ImageFont.truetype("/home/pi/VE100/arial.ttf", 17)
 						if(num_well==17):
 							x_coordinate = x_coordinate_17
 							for i in range(0,9):
@@ -1670,7 +1791,7 @@ def multiStepRunScreen():
 							for i in range(9,18):
 								img.text((x_coordinate,y_coordinate), str(i+1), font=img_font_1_17, fill=(0,255,0))
 								x_coordinate += well_distance_17
-						else:
+						elif(num_well==26):
 							x_coordinate = x_coordinate_26
 							for i in range(0,13):
 								img.text((x_coordinate,y_coordinate), str(i+1), font=img_font_1_26, fill=(0,255,0))
@@ -1685,6 +1806,21 @@ def multiStepRunScreen():
 									# ~ x_coordinate += 30
 								# ~ else:
 								x_coordinate += well_distance_26
+						else:
+							x_coordinate = x_coordinate_34
+							for i in range(0,17):
+								img.text((x_coordinate,y_coordinate), str(i+1), font=img_font_1_34, fill=(0,255,0))
+								x_coordinate += well_distance_34
+
+							x_coordinate = x_coordinate - well_distance_34 + pace_34
+							for i in range(17,34):
+								img.text((x_coordinate,y_coordinate), str(i+1), font=img_font_1_34, fill=(0,255,0))
+								# ~ if(i<18):
+									# ~ x_coordinate += 26
+								# ~ elif(i==18):
+									# ~ x_coordinate += 30
+								# ~ else:
+								x_coordinate += well_distance_34
 
 						if(num_well==26):
 							r1 = 568
@@ -1708,7 +1844,7 @@ def multiStepRunScreen():
 								else:
 									img.text((832,r5), str(i+1) + '. ' + str(well_name_list_26[i]), font=img_font_2, fill=(0,0,0))
 									r5 += 32
-						else:
+						elif(num_well==17):
 							r1 = 568
 							r2 = 568
 							r3 = 568
@@ -1724,6 +1860,29 @@ def multiStepRunScreen():
 								else:
 									img.text((432,r3), str(i+1) + '. ' + str(well_name_list_17[i]), font=img_font_2, fill=(0,0,0))
 									r3 += 32
+						else:
+							r1 = 568
+							r2 = 568
+							r3 = 568
+							r4 = 568
+							r5 = 568
+							for i in range(0,34):
+								if(i<7):
+									img.text((32,r1), str(i+1) + '. ' + str(well_name_list_34[i]), font=img_font_3, fill=(0,0,0))
+									r1 += 28
+								elif(i<14):
+									img.text((232,r2), str(i+1) + '. ' + str(well_name_list_34[i]), font=img_font_3, fill=(0,0,0))
+									r2 += 28
+								elif(i<21):
+									img.text((432,r3), str(i+1) + '. ' + str(well_name_list_34[i]), font=img_font_3, fill=(0,0,0))
+									r3 += 28
+								elif(i<28):
+									img.text((632,r4), str(i+1) + '. ' + str(well_name_list_34[i]), font=img_font_3, fill=(0,0,0))
+									r4 += 28
+								else:
+									img.text((832,r5), str(i+1) + '. ' + str(well_name_list_34[i]), font=img_font_3, fill=(0,0,0))
+									r5 += 28
+
 						edit_img.save(path_name + 'edit_img.png','png')
 
 						# wb = Workbook()
@@ -2611,7 +2770,9 @@ def oneStepRunScreen():
 						img.rectangle(shape, fill ="lightgray", outline="lightgray")
 						img_font_1_17 = ImageFont.truetype("/home/pi/VE100/arial.ttf", font_size_17)
 						img_font_1_26 = ImageFont.truetype("/home/pi/VE100/arial.ttf", font_size_26)
+						img_font_1_34 = ImageFont.truetype("/home/pi/VE100/arial.ttf", font_size_34)
 						img_font_2 = ImageFont.truetype("/home/pi/VE100/arial.ttf", 23)
+						img_font_3 = ImageFont.truetype("/home/pi/VE100/arial.ttf", 17)
 						if(num_well==17):
 							x_coordinate = x_coordinate_17
 							for i in range(0,9):
@@ -2622,7 +2783,7 @@ def oneStepRunScreen():
 							for i in range(9,18):
 								img.text((x_coordinate,y_coordinate), str(i+1), font=img_font_1_17, fill=(0,255,0))
 								x_coordinate += well_distance_17
-						else:
+						elif(num_well==26):
 							x_coordinate = x_coordinate_26
 							for i in range(0,13):
 								img.text((x_coordinate,y_coordinate), str(i+1), font=img_font_1_26, fill=(0,255,0))
@@ -2637,6 +2798,21 @@ def oneStepRunScreen():
 									# ~ x_coordinate += 30
 								# ~ else:
 								x_coordinate += well_distance_26
+						else:
+							x_coordinate = x_coordinate_34
+							for i in range(0,17):
+								img.text((x_coordinate,y_coordinate), str(i+1), font=img_font_1_34, fill=(0,255,0))
+								x_coordinate += well_distance_34
+
+							x_coordinate = x_coordinate - well_distance_34 + pace_34
+							for i in range(17,34):
+								img.text((x_coordinate,y_coordinate), str(i+1), font=img_font_1_34, fill=(0,255,0))
+								# ~ if(i<18):
+									# ~ x_coordinate += 26
+								# ~ elif(i==18):
+									# ~ x_coordinate += 30
+								# ~ else:
+								x_coordinate += well_distance_34
 
 						if(num_well==26):
 							r1 = 568
@@ -2660,7 +2836,7 @@ def oneStepRunScreen():
 								else:
 									img.text((832,r5), str(i+1) + '. ' + str(well_name_list_26[i]), font=img_font_2, fill=(0,0,0))
 									r5 += 32
-						else:
+						elif(num_well==17):
 							r1 = 568
 							r2 = 568
 							r3 = 568
@@ -2676,6 +2852,28 @@ def oneStepRunScreen():
 								else:
 									img.text((432,r3), str(i+1) + '. ' + str(well_name_list_17[i]), font=img_font_2, fill=(0,0,0))
 									r3 += 32
+						else:
+							r1 = 568
+							r2 = 568
+							r3 = 568
+							r4 = 568
+							r5 = 568
+							for i in range(0,34):
+								if(i<7):
+									img.text((32,r1), str(i+1) + '. ' + str(well_name_list_34[i]), font=img_font_3, fill=(0,0,0))
+									r1 += 28
+								elif(i<14):
+									img.text((232,r2), str(i+1) + '. ' + str(well_name_list_34[i]), font=img_font_3, fill=(0,0,0))
+									r2 += 28
+								elif(i<21):
+									img.text((432,r3), str(i+1) + '. ' + str(well_name_list_34[i]), font=img_font_3, fill=(0,0,0))
+									r3 += 28
+								elif(i<28):
+									img.text((632,r4), str(i+1) + '. ' + str(well_name_list_34[i]), font=img_font_3, fill=(0,0,0))
+									r4 += 28
+								else:
+									img.text((832,r5), str(i+1) + '. ' + str(well_name_list_34[i]), font=img_font_3, fill=(0,0,0))
+									r5 += 28
 
 						edit_img.save(path_name + 'edit_img.png','png')
 
