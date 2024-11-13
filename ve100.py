@@ -1552,31 +1552,35 @@ def multiStepRunScreen():
 		if(voltage1_entry.get()=='' or voltage2_entry.get()=='' or voltage3_entry.get()==''):
 			messagebox.showwarning("","Please enter the voltage !")
 		elif((voltage1_entry.get().isnumeric())==0 or (voltage2_entry.get().isnumeric())==0 or (voltage3_entry.get().isnumeric())==0):
-			messagebox.showwarning("","Voltage must be between 12 and 80 VDC")
+			messagebox.showwarning("","Voltage must be between 12 and 60 VDC")
 		elif(int(voltage1_entry.get())<12):
-			messagebox.showwarning("","Voltage must be between 12 and 80 VDC")
+			messagebox.showwarning("","Voltage must be between 12 and 60 VDC")
 			voltage1_entry.delete(0,END)
 			voltage1_entry.insert(0, 12)
-		elif(int(voltage1_entry.get())>80):
-			messagebox.showwarning("","Voltage must be between 12 and 80 VDC")
+		elif(int(voltage1_entry.get())>60):
+			messagebox.showwarning("","Voltage must be between 12 and 60 VDC")
 			voltage1_entry.delete(0,END)
-			voltage1_entry.insert(0, 80)
+			voltage1_entry.insert(0, 60)
 		elif(int(voltage2_entry.get())<12):
-			messagebox.showwarning("","Voltage must be between 12 and 80 VDC")
+			messagebox.showwarning("","Voltage must be between 12 and 60 VDC")
 			voltage2_entry.delete(0,END)
 			voltage2_entry.insert(0, 12)
-		elif(int(voltage2_entry.get())>80):
-			messagebox.showwarning("","Voltage must be between 12 and 80 VDC")
+		elif(int(voltage2_entry.get())>60):
+			messagebox.showwarning("","Voltage must be between 12 and 60 VDC")
 			voltage2_entry.delete(0,END)
-			voltage2_entry.insert(0, 80)
+			voltage2_entry.insert(0, 60)
 		elif(int(voltage3_entry.get())<12):
-			messagebox.showwarning("","Voltage must be between 12 and 80 VDC")
+			messagebox.showwarning("","Voltage must be between 12 and 60 VDC")
 			voltage3_entry.delete(0,END)
 			voltage3_entry.insert(0, 12)
-		elif(int(voltage3_entry.get())>80):
-			messagebox.showwarning("","Voltage must be between 12 and 80 VDC")
+		elif(int(voltage3_entry.get())>60):
+			messagebox.showwarning("","Voltage must be between 12 and 60 VDC")
 			voltage3_entry.delete(0,END)
-			voltage3_entry.insert(0, 80)
+			voltage3_entry.insert(0, 60)
+		elif(int(m1_entry.get()) > 99 or int(m2_entry.get()) > 99 or int(m3_entry.get()) > 99):
+			messagebox.showwarning("","Maximum minute value is 99")
+		elif(int(s1_entry.get()) > 59 or int(s2_entry.get()) > 59 or int(s3_entry.get()) > 59):
+			messagebox.showwarning("","Maximum second value is 59")
 		elif(m1_entry.get()=='' or m2_entry.get()=='' or m3_entry.get()=='' or
 				s1_entry.get()=='' or s2_entry.get()=='' or s3_entry.get()==''):
 			messagebox.showwarning("","Please enter the timer !")
@@ -2605,9 +2609,13 @@ def oneStepRunScreen():
 		if(voltage_entry.get()==''):
 			messagebox.showwarning("","Please enter the voltage !")
 		elif((voltage_entry.get().isnumeric())==0 ):
-			messagebox.showwarning("","Voltage must be between 12 and 80 VDC")
-		elif(int(voltage_entry.get())<12 or int(voltage_entry.get())>80):
-			messagebox.showwarning("","Voltage must be between 12 and 80 VDC")
+			messagebox.showwarning("","Voltage must be between 12 and 60 VDC")
+		elif(int(voltage_entry.get())<12 or int(voltage_entry.get())>60):
+			messagebox.showwarning("","Voltage must be between 12 and 60 VDC")
+		elif(int(m_entry.get()) > 99):
+			messagebox.showwarning("","Maximum minute value is 99")
+		elif(int(s_entry.get()) > 59):
+			messagebox.showwarning("","Maximum second value is 59")
 		elif(m_entry.get()=='' or s_entry.get()==''):
 			messagebox.showwarning("","Please enter the run timer !")
 		elif(autocap_entry.get()==''):
