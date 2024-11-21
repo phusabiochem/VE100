@@ -1733,17 +1733,17 @@ def multiStepRunScreen():
 
 				send_data = '\rSTATUS\r'
 				ser.write(send_data.encode())
-				if(ser.in_waiting>0):
-					try:
-						current_measured = float(ser.readline().decode('utf-8').rstrip())
-					except:
-						current_measured = 0.045
-						pass
-					print("Data received:", current_measured)
-					if(current_measured < CURRENT_WARNING):
-						present_current_label.config(text="LOW CURRENT WARNING !")
-					else:
-						present_current_label.config(text="")
+				# ~ if(ser.in_waiting>0):
+					# ~ try:
+						# ~ current_measured = float(ser.readline().decode('utf-8').rstrip())
+					# ~ except:
+						# ~ current_measured = 0.045
+						# ~ pass
+					# ~ print("Data received:", current_measured)
+					# ~ if(current_measured < CURRENT_WARNING):
+						# ~ present_current_label.config(text="LOW CURRENT WARNING !")
+					# ~ else:
+						# ~ present_current_label.config(text="")
 
 				if(m3_set!=-1):
 					solve_s3 = s3_label.after(1000, time_s3)
@@ -1999,17 +1999,17 @@ def multiStepRunScreen():
 
 				send_data = '\rSTATUS\r'
 				ser.write(send_data.encode())
-				if(ser.in_waiting>0):
-					try:
-						current_measured = float(ser.readline().decode('utf-8').rstrip())
-					except:
-						current_measured = 0.045
-						pass
-					print("Data received:", current_measured)
-					if(current_measured < CURRENT_WARNING):
-						present_current_label.config(text="LOW CURRENT WARNING !")
-					else:
-						present_current_label.config(text="")
+				# ~ if(ser.in_waiting>0):
+					# ~ try:
+						# ~ current_measured = float(ser.readline().decode('utf-8').rstrip())
+					# ~ except:
+						# ~ current_measured = 0.045
+						# ~ pass
+					# ~ print("Data received:", current_measured)
+					# ~ if(current_measured < CURRENT_WARNING):
+						# ~ present_current_label.config(text="LOW CURRENT WARNING !")
+					# ~ else:
+						# ~ present_current_label.config(text="")
 
 				if(m2_set!=-1):
 					solve_s2 = s2_label.after(1000, time_s2)
@@ -2082,17 +2082,17 @@ def multiStepRunScreen():
 
 				send_data = '\rSTATUS\r'
 				ser.write(send_data.encode())
-				if(ser.in_waiting>0):
-					try:
-						current_measured = float(ser.readline().decode('utf-8').rstrip())
-					except:
-						current_measured = 0.045
-						pass
+				# ~ if(ser.in_waiting>0):
+					# ~ try:
+						# ~ current_measured = float(ser.readline().decode('utf-8').rstrip())
+					# ~ except:
+						# ~ current_measured = 0.045
+						# ~ pass
 
-					if(current_measured < CURRENT_WARNING):
-						present_current_label.config(text="LOW CURRENT WARNING !")
-					else:
-						present_current_label.config(text="")
+					# ~ if(current_measured < CURRENT_WARNING):
+						# ~ present_current_label.config(text="LOW CURRENT WARNING !")
+					# ~ else:
+						# ~ present_current_label.config(text="")
 
 				if(m1_set!=-1):
 					solve_s1 = s1_label.after(1000, time_s1)
@@ -2149,17 +2149,17 @@ def multiStepRunScreen():
 
 				send_data = '\rSTATUS\r'
 				ser.write(send_data.encode())
-				if(ser.in_waiting>0):
-					try:
-						current_measured = float(ser.readline().decode('utf-8').rstrip())
-					except:
-						current_measured = 0.045
-						pass
-					print("Data received:", current_measured)
-					if(current_measured < CURRENT_WARNING):
-						present_current_label.config(text="LOW CURRENT WARNING !")
-					else:
-						present_current_label.config(text="")
+				# ~ if(ser.in_waiting>0):
+					# ~ try:
+						# ~ current_measured = float(ser.readline().decode('utf-8').rstrip())
+					# ~ except:
+						# ~ current_measured = 0.045
+						# ~ pass
+					# ~ print("Data received:", current_measured)
+					# ~ if(current_measured < CURRENT_WARNING):
+						# ~ present_current_label.config(text="LOW CURRENT WARNING !")
+					# ~ else:
+						# ~ present_current_label.config(text="")
 
 				if(m0_set!=-1 and running==1):
 					solve_s0 = s0_label.after(1000, time_s0)
@@ -2730,17 +2730,17 @@ def oneStepRunScreen():
 
 				send_data = '\rSTATUS\r'
 				ser.write(send_data.encode())
-				if(ser.in_waiting>0):
-					try:
-						current_measured = float(ser.readline().decode('utf-8').rstrip())
-					except:
-						current_measured = 0.045
-						pass
-					print("Data received:", current_measured)
-					if(current_measured < CURRENT_WARNING):
-						present_current_label.config(text="LOW CURRENT WARNING !")
-					else:
-						present_current_label.config(text="")
+				# ~ if(ser.in_waiting>0):
+					# ~ try:
+						# ~ current_measured = float(ser.readline().decode('utf-8').rstrip())
+					# ~ except:
+						# ~ current_measured = 0.045
+						# ~ pass
+					# ~ print("Data received:", current_measured)
+					# ~ if(current_measured < CURRENT_WARNING):
+						# ~ present_current_label.config(text="LOW CURRENT WARNING !")
+					# ~ else:
+						# ~ present_current_label.config(text="")
 
 				if(m_set!=-1):
 					solve_s1 = s1_label.after(1000, time_s1)
@@ -2982,17 +2982,17 @@ def oneStepRunScreen():
 
 				send_data = '\rSTATUS\r'
 				ser.write(send_data.encode())
-				if(ser.in_waiting>0):
-					try:
-						current_measured = float(ser.readline().decode('utf-8').rstrip())
-					except:
-						current_measured = 0.045
-						pass
-					print("Data received:", current_measured)
-					if(current_measured < CURRENT_WARNING):
-						present_current_label.config(text="LOW CURRENT WARNING !")
-					else:
-						present_current_label.config(text="")
+				# ~ if(ser.in_waiting>0):
+					# ~ try:
+						# ~ current_measured = float(ser.readline().decode('utf-8').rstrip())
+					# ~ except:
+						# ~ current_measured = 0.045
+						# ~ pass
+					# ~ print("Data received:", current_measured)
+					# ~ if(current_measured < CURRENT_WARNING):
+						# ~ present_current_label.config(text="LOW CURRENT WARNING !")
+					# ~ else:
+						# ~ present_current_label.config(text="")
 
 				if(m0_set!=-1):
 					solve_s0 = s0_label.after(1000, time_s0)
