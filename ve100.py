@@ -388,8 +388,8 @@ GPIO.setup(SENSOR_PIN, GPIO.IN)
 # GPIO - END
 
 # ADS1115 - START
-i2c = busio.I2C(3, 2)
-ads = ADS.ADS1115(i2c)
+# ~ i2c = busio.I2C(3, 2)
+# ~ ads = ADS.ADS1115(i2c)
 # ADS1115 - END
 
 # DS1307
@@ -2719,13 +2719,13 @@ def oneStepRunScreen():
 			voltage1_labelframe.place(x=11,y=5)
 			timer1_labelframe = LabelFrame(multirunscreen1_title_labelframe, text="Time left", font=('Arial', 10), bg='grey70', width=140, height=50)
 			timer1_labelframe.place(x=11,y=60)
-			voltage1_label = Label(voltage1_labelframe, fg ='red2', text=str(voltage1_set) + 'V / ' + str('%02d'%m1_raw) + ':' + str('%02d'%s1_raw), font=('Arial',15,'bold'), bg='grey70')
+			voltage1_label = Label(voltage1_labelframe, fg ='red2', text=str(voltage_set) + 'V / ' + str('%02d'%m_raw) + ':' + str('%02d'%s_raw), font=('Arial',15,'bold'), bg='grey70')
 			voltage1_label.place(x=13, y=6)
-			m1_label = Label(timer1_labelframe, fg ='red2', text=str('%.02d'%m1_set), font=('Arial',15,'bold'), bg='grey70')
+			m1_label = Label(timer1_labelframe, fg ='red2', text=str('%.02d'%m_set), font=('Arial',15,'bold'), bg='grey70')
 			m1_label.place(x=33, y=-2)
 			twodot1_label = Label(timer1_labelframe, fg ='red2', text=':', font=('Arial',15,'bold'), bg='grey70')
 			twodot1_label.place(x=61,y=-2)
-			s1_label = Label(timer1_labelframe, fg ='red2', text=str('%.02d'%s1_set), font=('Arial',15,'bold'), bg='grey70')
+			s1_label = Label(timer1_labelframe, fg ='red2', text=str('%.02d'%s_set), font=('Arial',15,'bold'), bg='grey70')
 			s1_label.place(x=75, y=-2)
 
 			preview_labelframe = LabelFrame(onerunscreen_labelframe, bg='black', fg='red', text="◉ MONITOR", font=("Arial",13,'bold'), width=849, height=530)
