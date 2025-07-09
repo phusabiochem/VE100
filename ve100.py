@@ -1651,7 +1651,7 @@ class MultiRun_Screen(Frame):
 
 			if(self.stop_button['text'] == 'STOP'):
 				try:
-					tprocess_label(self.base_window.main_menu.result_path + 'final_result.png')
+					camera_capture(self.base_window.main_menu.result_path + 'final_result.png')
 
 					# Create Image with sample name 
 					original_img = Image.open(self.base_window.main_menu.result_path + 'final_result.png')
