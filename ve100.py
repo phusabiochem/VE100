@@ -2447,12 +2447,12 @@ class MultiSetting_Screen(Frame):
 				messagebox.showinfo("", Setting_Language["Saved"][language])
 
 	def back_clicked(self):
-		self.base_window.switch_page(self.base_window.multi_setting)
+		self.base_window.switch_page(self.base_window.sample_naming)
 
 		self.base_window.frame_list.remove(self.base_window.multi_setting)
 		del self.base_window.multi_setting
 		self.base_window.multi_setting = MultiSetting_Screen(self.base_window)
-		self.base_window.frame_list.append(self.self.base_window.multi_setting)
+		self.base_window.frame_list.append(self.base_window.multi_setting)
 
 	def run_clicked(self):
 		if(self.voltage1_entry.get()=='' or self.voltage2_entry.get()=='' or self.voltage3_entry.get()==''):
