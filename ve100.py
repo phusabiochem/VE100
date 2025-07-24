@@ -1498,7 +1498,7 @@ class MultiRun_Screen(Frame):
 			# Complete Inform
 			self.tprocess_label = Label(self.preview_labelframe, bg='black', fg='white smoke', text='Processing\r...', font=("Arial",13,'bold'))
 			self.tprocess_label.grid(row=0, column=0, sticky="nsew")
-			self.tprocess_label['text'] = 'COMPLETED'
+			self.tprocess_label['text'] = Run_Language["Complete Label"][language]
 			self.tprocess_label['font'] = ('Arial',20, 'bold')
 			self.tprocess_label['fg'] = 'lawn green'
 
@@ -1540,7 +1540,7 @@ class MultiRun_Screen(Frame):
 					pass
 
 	def capture_clicked(self):
-		if(self.capture_button['text'] == "Capture"):
+		if(self.capture_button['text'] == Run_Language["Capture Button"][language]):
 			if(self.stage0_is_running):
 				s_cap = s0_set - self.s0_curent
 				if(s_cap<0):
@@ -1637,7 +1637,6 @@ class MultiRun_Screen(Frame):
 					pass
 
 
-
 	def stop_clicked(self):
 		try:
 			camera.stop_preview()
@@ -1649,7 +1648,7 @@ class MultiRun_Screen(Frame):
 			GPIO.output(RUN_LED_PIN, GPIO.LOW)
 			GPIO.output(RELAY_PIN, GPIO.LOW)
 
-			if(self.stop_button['text'] == 'STOP'):
+			if(self.stop_button['text'] == Run_Language["Stop Button"][language]):
 				try:
 					camera_capture(self.base_window.main_menu.result_path + 'final_result.png')
 
@@ -1782,7 +1781,7 @@ class MultiRun_Screen(Frame):
 			except:
 				pass
 			
-			if(self.stop_button['text'] == 'STOP'):
+			if(self.stop_button['text'] == Run_Language["Stop Button"][language]):
 				self.automail_check()
 			
 			self.system_is_running = 0
@@ -1987,6 +1986,10 @@ class MultiRun_Screen(Frame):
 		# 	self.mode1_clicked()
 		# else:
 		# 	self.mode2_clicked()
+
+		GPIO.output(BLUE_LIGHT_PIN, GPIO.HIGH)
+		GPIO.output(RELAY_PIN, GPIO.HIGH)
+		GPIO.output(RUN_LED_PIN, GPIO.HIGH)
 
 		self.tprocess_label.update_idletasks()
 
@@ -3808,7 +3811,7 @@ class MainMenu(Frame):
 
 	def login_clicked(self):
 		global account_active, email_password, email_address
-		if(self.login_button['text'] == "Login"):
+		if(self.login_button['text'] == MainScreen_Language['Login Button'][language]):
 			if(self.email_entry.get()==''):
 				messagebox.showwarning("", MainScreen_Language['Email Empty'][language])
 			elif(self.password_entry.get()==''):
