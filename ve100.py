@@ -293,7 +293,8 @@ Run_Language = {
 	##### Messagebox #####
 
 	"Stop Running": ["Do you want to stop electrophoresis ?", "Bạn có muốn dừng điện di ?"],
-	"Picture Saved": ["The picture have been saved", "Ảnh đã đc lưu"],
+	"Back MainMenu": ["Do you want to go back to the main screen ?", "Bạn có muốn quay lại màn hình chính ?"],
+	"Picture Saved": ["The picture have been saved", "Ảnh đã được lưu"],
 }
 ############################### Check file ##################################
 working_dir = '/home/pi/VE100'
@@ -1344,7 +1345,7 @@ class MultiRun_Screen(Frame):
 			self.isenseValue_label.config(text = "")
 
 			GPIO.output(RELAY_PIN, GPIO.LOW)
-			GPIO.output(POWER_LED_PIN, GPIO.LOW)
+			GPIO.output(RUN_LED_PIN, GPIO.LOW)
 			uart_send(0,0)
 
 			self.m3_label.config(text = '00')
@@ -1642,7 +1643,12 @@ class MultiRun_Screen(Frame):
 			camera.stop_preview()
 		except:
 			pass
-		msgbox = messagebox.askquestion('', Run_Language["Stop Running"][language], icon = 'question')
+
+		msgbox = ""
+		if(self.stop_button['text'] == Run_Language["Stop Button"][language]):
+			msgbox = messagebox.askquestion('', Run_Language["Stop Running"][language], icon = 'question')
+		else:
+			msgbox = messagebox.askquestion('', Run_Language["Back MainMenu"][language], icon = 'question')
 		if(msgbox=='yes'):
 			uart_send(0,0)
 			GPIO.output(RUN_LED_PIN, GPIO.LOW)
@@ -3649,6 +3655,7 @@ class MainMenu(Frame):
 	def exit_clicked(self):
 		msg = messagebox.askquestion("", MainScreen_Language["Exit Confirm"][language])
 		if(msg == "yes"):
+			GPIO.setup(POWER_LED_PIN, GPIO.OUT, initial=GPIO.LOW)
 			os._exit(0)
 			self.base_window.destroy()
 	
