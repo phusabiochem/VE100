@@ -461,8 +461,8 @@ else:
 
 
 # ADS1115 - START
-# i2c = busio.I2C(3, 2)
-# ads = ADS.ADS1115(i2c)
+i2c = busio.I2C(3, 2)
+ads = ADS.ADS1115(i2c)
 # ADS1115 - END
 
 # DS1307
@@ -1341,11 +1341,10 @@ class SingleRun_Screen(Frame):
 
 
 	def readFeebackValue(self):
-		pass
-		# v_adc = AnalogIn(ads, ADS.P2)
-		# v_refVoltage = v_adc.voltage
-		# v_realVoltage = round(v_refVoltage * MAX_VOLTAGE_VALUE / DEIVIDE_VOLTAGE_VALUE)
-		# self.vsenseValue_label.config(text = str(v_realVoltage) + ' V')
+		v_adc = AnalogIn(ads, ADS.P2)
+		v_refVoltage = v_adc.voltage
+		v_realVoltage = round(v_refVoltage * MAX_VOLTAGE_VALUE / DEIVIDE_VOLTAGE_VALUE)
+		self.vsenseValue_label.config(text = str(v_realVoltage) + ' V')
 
 		# i_adc =  AnalogIn(ads, ADS.P1)
 		# i_refVoltage = i_adc.voltage
@@ -2504,11 +2503,10 @@ class MultiRun_Screen(Frame):
 
 
 	def readFeebackValue(self):
-		pass
-		# v_adc = AnalogIn(ads, ADS.P2)
-		# v_refVoltage = v_adc.voltage
-		# v_realVoltage = round(v_refVoltage * MAX_VOLTAGE_VALUE / DEIVIDE_VOLTAGE_VALUE)
-		# self.vsenseValue_label.config(text = str(v_realVoltage) + ' V')
+		v_adc = AnalogIn(ads, ADS.P2)
+		v_refVoltage = v_adc.voltage
+		v_realVoltage = round(v_refVoltage * MAX_VOLTAGE_VALUE / DEIVIDE_VOLTAGE_VALUE)
+		self.vsenseValue_label.config(text = str(v_realVoltage) + ' V')
 
 		# i_adc =  AnalogIn(ads, ADS.P1)
 		# i_refVoltage = i_adc.voltage
