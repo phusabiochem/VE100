@@ -257,6 +257,7 @@ Setting_Language = {
 	"Stage LabelFrame": ["Stage", "Giai đoạn"],
 	"VoltageSetting LabelFrame": ["Voltage (DC)", "Điện áp (DC)"],
 	"TimerSetting LabelFrame": ["Timer (min : sec)", "Thời gian (phút : giây)"],
+	"AutoCaptureSetting LabelFrame": ["Auto-Capture Timer (min)", "Thời gian chụp tự động (phút)"],
 	"AutoMail LabelFrame": ["Automatic email sending", "Tự động gửi mail"],
 	"AutoMailOn Button": ["ON", "Bật"],
 	"AutoMailOff Button": ["OFF", "Tắt"],
@@ -266,6 +267,7 @@ Setting_Language = {
 	"Save Setting": ["Do you want to save the settings ?", "Bạn có muốn lưu cài đặt ?"],
 	"Voltage Empty": ["Please enter all voltage values", "Xin nhập đầy đủ giá trị điện áp"],
 	"Timer Empty": ["Please enter all timer values", "Xin nhập đầy đủ giá trị thời gian"],
+	"AutoCap Empty": ["Please enter Auto-Capture Timer values", "Xin nhập thời gian tự động chụp"],
 	"Saved": ["Saved", "Đã lưu"],
 	"Email Empty": ["Please enter the recipient email", "Xin nhập email người nhận"],
 	"Voltage Overflow Value": ["Voltage must be between " + str(VOLTAGE_MIN_VALUE) + " and " + str(VOLTAGE_MAX_VALUE) + " VDC",
@@ -459,8 +461,8 @@ else:
 
 
 # ADS1115 - START
-i2c = busio.I2C(3, 2)
-ads = ADS.ADS1115(i2c)
+# i2c = busio.I2C(3, 2)
+# ads = ADS.ADS1115(i2c)
 # ADS1115 - END
 
 # DS1307
@@ -813,6 +815,994 @@ class ScrollableFrame(Frame):
 			canvas.itemconfig("frame", width=event.width)
 
 		canvas.bind("<Configure>", _on_canvas_configure)
+
+class SingleRun_Screen(Frame):
+	def __init__(self, master):
+		super().__init__(master)
+		self.base_window = master
+		
+		self.rowconfigure(0, weight=1)
+		self.columnconfigure(0, weight=1)
+
+		self.isense_value = 0 
+		self.vsense_value = 0
+		self.cam_mode = 1
+		self.system_is_running = 1
+		self.camera_framerate = 1
+
+		self.preview_x = 0
+		self.preview_y = 0
+		self.preview_width = 0
+		self.preview_height = 0
+
+		self.stage0_is_running = 1
+		self.stage1_is_running = 0
+
+		self.auto_capture_call = 0
+		self.auto_capture_count = 0 
+
+		# Base frame create
+		self.base_frame = Frame(self,bg=MAIN_FUNCTION_FRAME_BGD_COLOR)
+		self.base_frame.grid(row=0, column=0, sticky='nsew')
+		self.base_frame.rowconfigure(0, weight=1)
+		self.base_frame.rowconfigure(1, weight=11)
+		# self.base_frame.rowconfigure(2, weight=1)
+		self.base_frame.columnconfigure(0, weight=1)
+
+		self.title_frame = Frame(self.base_frame, bg = MAIN_FUNCTION_FRAME_BGD_COLOR)
+		self.title_frame.grid(row=0, column=0, sticky='nsew')
+		self.title_frame.rowconfigure(0, weight=1)
+		self.title_frame.columnconfigure(0, weight=1)
+		self.title_frame.grid_propagate(False)
+
+		self.work_frame = Frame(self.base_frame, bg = MAIN_FUNCTION_FRAME_BGD_COLOR)
+		self.work_frame.grid(row=1, column=0, sticky='nsew')
+		self.work_frame.columnconfigure(0, weight=1)
+		self.work_frame.columnconfigure(1, weight=5)
+		self.work_frame.rowconfigure(0, weight=1)
+		self.work_frame.grid_propagate(False)
+
+		# In Title frame
+		self.title_label = Label(self.title_frame,
+								text = Run_Language['Run Label'][language],
+								font = MAIN_TITLE_TXT_FONT,
+								bg = MAIN_TITLE_BGD_COLOR,
+								fg = MAIN_TITLE_TXT_COLOR)
+		self.title_label.grid(row=0, column=0, sticky="snew")
+
+		# In Work frame
+		self.work_frame_1 = Frame(self.work_frame, bg = MAIN_FUNCTION_FRAME_BGD_COLOR)
+		self.work_frame_1.grid(row=0, column=0, sticky='nsew')
+		self.work_frame_1.columnconfigure(0, weight=1)
+		self.work_frame_1.rowconfigure(0, weight=1)
+		self.work_frame_1.rowconfigure(1, weight=1)
+		self.work_frame_1.rowconfigure(2, weight=1)
+		self.work_frame_1.rowconfigure(3, weight=1)
+		self.work_frame_1.grid_propagate(False)
+
+		self.work_frame_2 = Frame(self.work_frame, bg = MAIN_FUNCTION_FRAME_BGD_COLOR)
+		self.work_frame_2.grid(row=0, column=1, sticky='nsew')
+		self.work_frame_2.columnconfigure(0, weight=1)
+		self.work_frame_2.rowconfigure(0, weight=8)
+		self.work_frame_2.rowconfigure(1, weight=1)
+		self.work_frame_2.grid_propagate(False)
+
+		# In work frame 1
+		self.stage0_labelframe = LabelFrame(self.work_frame_1, 
+										bg = RUNSTAGE_LABELFRAME_ACTIVE_BGD_COLOR,
+										fg = RUNSTAGE_LABELFRAME_TXT_COLOR,
+										text = Run_Language["Stage LabelFrame"][language] + " 0",
+										font = RUNSTAGE_LABELFRAME_TXT_FONT)
+		self.stage0_labelframe.grid(row=0, column=0, sticky='nsew')
+		self.stage0_labelframe.rowconfigure(0, weight=1)
+		self.stage0_labelframe.rowconfigure(1, weight=1)
+		self.stage0_labelframe.columnconfigure(0, weight=1)
+		self.stage0_labelframe.pack_propagate(0)		
+
+		self.stage1_labelframe = LabelFrame(self.work_frame_1, 
+										bg = RUNSTAGE_LABELFRAME_INACTIVE_BGD_COLOR,
+										fg = RUNSTAGE_LABELFRAME_TXT_COLOR,
+										text = Run_Language["Stage LabelFrame"][language] + " 1",
+										font = RUNSTAGE_LABELFRAME_TXT_FONT)
+		self.stage1_labelframe.grid(row=1, column=0, sticky='nsew')
+		self.stage1_labelframe.rowconfigure(0, weight=1)
+		self.stage1_labelframe.rowconfigure(1, weight=1)
+		self.stage1_labelframe.columnconfigure(0, weight=1)
+		self.stage1_labelframe.pack_propagate(0)
+
+
+		self.stage0_labelframe_1 = LabelFrame(self.stage0_labelframe, 
+										bg = RUNSTAGE_LABELFRAME_INACTIVE_BGD_COLOR,
+										fg = RUNSTAGE_LABELFRAME_TXT_COLOR,
+										font = RUNSTAGE_LABELFRAME_TXT_FONT)
+		self.stage0_labelframe_1.grid(row=0, column=0, padx=5, sticky='nsew')
+		self.stage0_labelframe_1.rowconfigure(0, weight=1)
+		self.stage0_labelframe_1.columnconfigure(0, weight=1)
+		self.stage0_labelframe_1.pack_propagate(0)
+
+		self.stage0_labelframe_2 = LabelFrame(self.stage0_labelframe, 
+										bg = RUNSTAGE_LABELFRAME_INACTIVE_BGD_COLOR,
+										fg = RUNSTAGE_LABELFRAME_TXT_COLOR,
+										text = Run_Language["TimeLeft LabelFrame"][language],
+										font = TIMELEFT_LABELFRAME_TXT_FONT)
+		self.stage0_labelframe_2.grid(row=1, column=0, padx=5, pady=5, sticky='nsew')
+		self.stage0_labelframe_2.rowconfigure(0, weight=1)
+		self.stage0_labelframe_2.columnconfigure(0, weight=1)
+		self.stage0_labelframe_2.columnconfigure(1, weight=1)
+		self.stage0_labelframe_2.columnconfigure(2, weight=1)
+		self.stage0_labelframe_2.pack_propagate(0)
+
+		self.stage1_labelframe_1 = LabelFrame(self.stage1_labelframe, 
+										bg = RUNSTAGE_LABELFRAME_INACTIVE_BGD_COLOR,
+										fg = RUNSTAGE_LABELFRAME_TXT_COLOR,
+										font = RUNSTAGE_LABELFRAME_TXT_FONT)
+		self.stage1_labelframe_1.grid(row=0, column=0, padx=5, sticky='nsew')
+		self.stage1_labelframe_1.rowconfigure(0, weight=1)
+		self.stage1_labelframe_1.columnconfigure(0, weight=1)
+		self.stage1_labelframe_1.pack_propagate(0)
+
+		self.stage1_labelframe_2 = LabelFrame(self.stage1_labelframe, 
+										bg = RUNSTAGE_LABELFRAME_INACTIVE_BGD_COLOR,
+										fg = RUNSTAGE_LABELFRAME_TXT_COLOR,
+										text = Run_Language["TimeLeft LabelFrame"][language],
+										font = TIMELEFT_LABELFRAME_TXT_FONT)
+		self.stage1_labelframe_2.grid(row=1, column=0, padx=5, pady=5, sticky='nsew')
+		self.stage1_labelframe_2.rowconfigure(0, weight=1)
+		self.stage1_labelframe_2.columnconfigure(0, weight=1)
+		self.stage1_labelframe_2.columnconfigure(1, weight=1)
+		self.stage1_labelframe_2.columnconfigure(2, weight=1)
+		self.stage1_labelframe_2.pack_propagate(0)
+
+		# In work frame 2
+		self.preview_frame = Frame(self.work_frame_2, bg = 'black')
+		self.preview_frame.grid(row=0, column=0, sticky="nsew")
+		self.preview_frame.columnconfigure(0, weight=10)
+		self.preview_frame.columnconfigure(1, weight=1)
+		self.preview_frame.rowconfigure(0, weight=1)
+		self.preview_frame.grid_propagate(False)
+
+		self.preview_labelframe = LabelFrame(self.preview_frame, 
+									bg='black', 
+									fg='red', 
+									text = "◉ Camera View", 
+									font=("Arial", 12,'bold'))
+		self.preview_labelframe.grid(row=0, column=0, sticky="nsew")
+		self.preview_labelframe.columnconfigure(0, weight=1)
+		self.preview_labelframe.rowconfigure(0, weight=1)
+		self.preview_labelframe.grid_propagate(False)
+
+		# self.camera_frame = Frame(self.preview_labelframe, bg = "black")
+		# self.camera_frame.grid(row=0, column=0, sticky="nsew")
+ 		# # Camera Init
+		# self.camera = MyCamera(self.camera_frame)
+
+		# t_progressbar = atk.RadialProgressbar(self.preview_labelframe, fg='cyan', text_fg='black', text_bg = 'black')
+		# t_progressbar.grid(row=0, column=0, sticky="nsew")
+		# t_progressbar.start()
+		self.tprocess_label = Label(self.preview_labelframe, bg='black', fg='white smoke', text='Processing\r...', font=("Arial",13,'bold'))
+		self.tprocess_label.grid(row=0, column=0, sticky="nsew")
+
+		self.cammode_frame = Frame(self.preview_frame, bg = 'black')
+		self.cammode_frame.grid(row=0, column=1, sticky="nsew")
+		self.cammode_frame.columnconfigure(0, weight=1)
+		self.cammode_frame.rowconfigure(0, weight=1)
+		self.cammode_frame.rowconfigure(1, weight=1)
+		self.cammode_frame.grid_propagate(False)
+
+		self.cammode1_button = Button(self.cammode_frame,
+								text = Run_Language["CamMode1 Button"][language],
+								font = CAMMODE_BUTTON_TXT_FONT,
+								bg = CAMMODE_BUTTON_ACTIVE_BGD_COLOR,
+								fg = CAMMODE_BUTTON_TXT_COLOR,
+								borderwidth = 0,
+								command = self.mode1_clicked)
+		self.cammode1_button.grid(row=0, column=0, sticky="nsew")
+
+		self.cammode2_button = Button(self.cammode_frame,
+								text = Run_Language["CamMode2 Button"][language],
+								font = CAMMODE_BUTTON_TXT_FONT,
+								bg = CAMMODE_BUTTON_INACTIVE_BGD_COLOR,
+								fg = CAMMODE_BUTTON_TXT_COLOR,
+								borderwidth = 0,
+								command = self.mode2_clicked)
+		self.cammode2_button.grid(row=1, column=0, sticky="nsew")
+
+
+		self.control_frame = Frame(self.work_frame_2, bg = MAIN_FUNCTION_FRAME_BGD_COLOR)
+		self.control_frame.grid(row=1, column=0, sticky='nsew')
+		self.control_frame.columnconfigure(0, weight=1)
+		self.control_frame.columnconfigure(1, weight=1)
+		self.control_frame.columnconfigure(2, weight=1)
+		self.control_frame.rowconfigure(0, weight=1)
+		self.control_frame.grid_propagate(False)
+
+		self.control_frame_1 = LabelFrame(self.control_frame, bg = RUNSTAGE_LABELFRAME_INACTIVE_BGD_COLOR)
+		self.control_frame_1.grid(row=0, column=0, pady=1, sticky="nsew")
+		self.control_frame_1.columnconfigure(0, weight=1)
+		self.control_frame_1.columnconfigure(1, weight=1)
+		self.control_frame_1.rowconfigure(0, weight=1)
+		self.control_frame_1.rowconfigure(1, weight=1)
+		self.control_frame_1.grid_propagate(False)
+
+		self.control_frame_2 = Frame(self.control_frame, bg = MAIN_FUNCTION_FRAME_BGD_COLOR)
+		self.control_frame_2.grid(row=0, column=1, pady=1, sticky="nsew")
+		self.control_frame_2.columnconfigure(0, weight=1)
+		self.control_frame_2.rowconfigure(0, weight=1)
+		self.control_frame_2.grid_propagate(False)
+
+		self.control_frame_3 = Frame(self.control_frame, bg = MAIN_FUNCTION_FRAME_BGD_COLOR)
+		self.control_frame_3.grid(row=0, column=2, pady=1, sticky="nsew")
+		self.control_frame_3.columnconfigure(0, weight=1)
+		self.control_frame_3.rowconfigure(0, weight=1)
+		self.control_frame_3.grid_propagate(False)
+
+		
+
+		self.vsense_label = Label(self.control_frame_1,
+								bg = RUNSTAGE_LABELFRAME_INACTIVE_BGD_COLOR,
+								text = Run_Language["VoltageSense Label"][language],
+								# anchor = 'e',
+								fg = RUNSTAGE_LABELFRAME_TXT_COLOR,
+								font = SENSE_LABEL_TXT_FONT)
+		self.vsense_label.grid(row=0, column=0, sticky= "nsew")
+		self.isense_label = Label(self.control_frame_1,
+								bg = RUNSTAGE_LABELFRAME_INACTIVE_BGD_COLOR,
+								# ~ text = Run_Language["CurrentSense Label"][language],
+								text = '',
+								# anchor = 'e',
+								fg = RUNSTAGE_LABELFRAME_TXT_COLOR,
+								font = SENSE_LABEL_TXT_FONT)
+		self.isense_label.grid(row=1, column=0, sticky= "nsew")
+
+		self.vsenseValue_label = Label(self.control_frame_1,
+								bg = SENSEVALUE_LABEL_BGD_COLOR,
+								text = str(self.vsense_value) + ' V',
+								# anchor = 'w',
+								fg = SENSEVALUE_LABEL_TXT_COLOR,
+								font = SENSEVALUE_LABEL_TXT_FONT)
+		self.vsenseValue_label.grid(row=0, column=1, sticky= "nsew")
+		self.isenseValue_label = Label(self.control_frame_1,
+								bg = SENSEVALUE_LABEL_BGD_COLOR,
+								# ~ text =  str(self.isense_value) + ' A',
+								text =  '',
+								# anchor = 'w',
+								fg = SENSEVALUE_LABEL_TXT_COLOR,
+								font = SENSEVALUE_LABEL_TXT_FONT)
+		self.isenseValue_label.grid(row=1, column=1, sticky= "nsew")
+
+		self.capture_button = Button(self.control_frame_2,
+								text = Run_Language["Capture Button"][language],
+								font = SWITCHPAGE_BUTTON_TXT_FONT,
+								bg = CAPTURE_BUTTON_BGD_COLOR,
+								fg = CAPTURE_BUTTON_TXT_COLOR,
+								borderwidth = 3,
+								command = self.capture_clicked)
+		self.capture_button.grid(row=0, column=0, sticky="nsew")
+
+		self.stop_button = Button(self.control_frame_3,
+								text = Run_Language["Stop Button"][language],
+								font = SWITCHPAGE_BUTTON_TXT_FONT,
+								bg = STOP_BUTTON_BGD_COLOR,
+								fg = STOP_BUTTON_TXT_COLOR,
+								borderwidth = 3,
+								command = self.stop_clicked)
+		self.stop_button.grid(row=0, column=0, sticky="nsew")
+
+	def stage0_counter(self):
+		self.system_is_running = 1
+
+		self.s0_curent = self.s0_curent - 1
+		if(self.s0_curent < 0):
+			self.m0_curent = self.m0_curent - 1 
+			self.s0_curent = 59
+		self.s0_label.config(text = str('%02d'%self.s0_curent)) # update second label
+		self.m0_label.config(text = str('%02d'%self.m0_curent)) # update minute label
+
+		# read Voltage & Current feedback here
+		self.readFeebackValue()
+
+		send_data = '\rSTATUS\r'
+		ser.write(send_data.encode())
+
+		if(self.m0_curent != -1):
+			self.s0_solve = self.s0_label.after(1000, self.stage0_counter)
+		else: 
+			self.m0_label.config(text = '00')
+			self.s0_label.config(text = '00')
+			try: 
+				self.s0_label.after_cancel(self.s0_solve)
+			except: 
+				pass
+
+			if(m0_set!=0 or s0_set!=0):
+				try:
+					camera_capture(self.base_window.main_menu.result_path + 'stage0_result.png')
+				except Exception as e:
+					error = messagebox.showerror("ERR 03", str(e), icon = "error")
+					if(error=='ok'):
+						pass
+
+			# Xet xem co run voltage 1 khong 
+			if(int(self.base_window.single_setting.voltage1_set) > 0):
+				GPIO.output(RELAY_PIN, GPIO.HIGH)
+				GPIO.output(RUN_LED_PIN, GPIO.HIGH)
+				uart_send(self.base_window.single_setting.voltage1_set, 1)
+			else:
+				uart_send(0, 0)
+				GPIO.output(RELAY_PIN, GPIO.LOW)
+				GPIO.output(RUN_LED_PIN, GPIO.LOW)
+
+				for i in range(0,3):
+					GPIO.output(BUZZER_PIN, GPIO.HIGH)
+					sleep(0.7)
+					GPIO.output(BUZZER_PIN, GPIO.LOW)
+					sleep(0.7)
+
+			self.stage0_is_running = 0
+			self.stage1_is_running = 1
+
+			self.stage1_counter()
+
+	def stage1_counter(self):
+		self.stage0_labelframe['bg'] = RUNSTAGE_LABELFRAME_INACTIVE_BGD_COLOR
+		self.stage1_labelframe['bg'] = RUNSTAGE_LABELFRAME_ACTIVE_BGD_COLOR
+
+		self.s1_curent = self.s1_curent - 1
+		if(self.s1_curent < 0):
+			self.m1_curent = self.m1_curent - 1 
+			self.s1_curent = 59
+		self.s1_label.config(text = str('%02d'%self.s1_curent)) # update second label
+		self.m1_label.config(text = str('%02d'%self.m1_curent)) # update minute label
+
+		# read Voltage & Current feedback here
+		self.readFeebackValue()
+
+		send_data = '\rSTATUS\r'
+		ser.write(send_data.encode())
+
+		if(self.m1_curent != -1):
+			self.s1_solve = self.s1_label.after(1000, self.stage1_counter)
+		else:
+			self.vsenseValue_label.config(text = "0 V")
+			# ~ self.isenseValue_label.config(text = "0 A")
+			self.isenseValue_label.config(text = "")
+
+			GPIO.output(RELAY_PIN, GPIO.LOW)
+			GPIO.output(RUN_LED_PIN, GPIO.LOW)
+			uart_send(0,0)
+
+			self.m1_label.config(text = '00')
+			self.s1_label.config(text = '00')
+
+			try:
+				app.after_cancel(self.autocap_solve)
+			except:
+				pass
+			try:
+				self.s1_label.after_cancel(self.s1_solve)
+			except:
+				pass
+
+			try: 
+				camera_capture(self.base_window.main_menu.result_path + 'stage1_result.png')
+
+				# Create Image with sample name 
+				original_img = Image.open(self.base_window.main_menu.result_path + 'stage1_result.png')
+				process_img = ImageDraw.Draw(original_img)
+				shape = [(1024, 768), (0,550)]
+				process_img.rectangle(shape, fill="lightgray", outline="lightgray")
+				img_font_1_18 = ImageFont.truetype("/home/pi/VE100/arial.ttf", font_size_18)
+				img_font_1_26 = ImageFont.truetype("/home/pi/VE100/arial.ttf", font_size_26)
+				img_font_1_34 = ImageFont.truetype("/home/pi/VE100/arial.ttf", font_size_34)
+				img_font_2 = ImageFont.truetype("/home/pi/VE100/arial.ttf", 23)
+				img_font_3 = ImageFont.truetype("/home/pi/VE100/arial.ttf", 17)
+
+				if(self.base_window.sample_naming.number_of_wells == 18):
+					x_coordinate = x_coordinate_18
+					for i in range(0,9):
+						process_img.text((x_coordinate, y_coordinate), str(i+1), font=img_font_1_18, fill=(0,255,0))
+						x_coordinate += well_distance_18
+
+					x_coordinate = x_coordinate - well_distance_18 + pace_18
+					for i in range(9,18):
+						process_img.text((x_coordinate, y_coordinate), str(i+1), font=img_font_1_18, fill=(0,255,0))
+						x_coordinate += well_distance_18
+
+					r1 = 568
+					r2 = 568
+					r3 = 568
+					r4 = 568
+					r5 = 568
+					for i in range(0,18):
+						if(i<6):
+							process_img.text((32,r1), str(i+1) + '. ' + str(self.base_window.sample_naming.wellname_list[i]), font=img_font_2, fill=(0,0,0))
+							r1 += 32
+						elif(i<12):
+							process_img.text((232,r2), str(i+1) + '. ' + str(self.base_window.sample_naming.wellname_list[i]), font=img_font_2, fill=(0,0,0))
+							r2 += 32
+						else:
+							process_img.text((432,r3), str(i+1) + '. ' + str(self.base_window.sample_naming.wellname_list[i]), font=img_font_2, fill=(0,0,0))
+							r3 += 32
+				
+				elif(self.base_window.sample_naming.number_of_wells == 26):
+					x_coordinate = x_coordinate_26
+					for i in range(0,13):
+						process_img.text((x_coordinate, y_coordinate), str(i+1), font=img_font_1_26, fill=(0,255,0))
+						x_coordinate += well_distance_26
+
+					x_coordinate = x_coordinate - well_distance_26 + pace_26
+					for i in range(13,26):
+						process_img.text((x_coordinate, y_coordinate), str(i+1), font=img_font_1_26, fill=(0,255,0))
+						x_coordinate += well_distance_26
+
+					r1 = 568
+					r2 = 568
+					r3 = 568
+					r4 = 568
+					r5 = 568
+					for i in range(0,26):
+						if(i<6):
+							process_img.text((32,r1), str(i+1) + '. ' + str(self.base_window.sample_naming.wellname_list[i]), font=img_font_2, fill=(0,0,0))
+							r1 += 32
+						elif(i<12):
+							process_img.text((232,r2), str(i+1) + '. ' + str(self.base_window.sample_naming.wellname_list[i]), font=img_font_2, fill=(0,0,0))
+							r2 += 32
+						elif(i<18):
+							process_img.text((432,r3), str(i+1) + '. ' + str(self.base_window.sample_naming.wellname_list[i]), font=img_font_2, fill=(0,0,0))
+							r3 += 32
+						elif(i<24):
+							process_img.text((632,r4), str(i+1) + '. ' + str(self.base_window.sample_naming.wellname_list[i]), font=img_font_2, fill=(0,0,0))
+							r4 += 32
+						else:
+							process_img.text((832,r5), str(i+1) + '. ' + str(self.base_window.sample_naming.wellname_list[i]), font=img_font_2, fill=(0,0,0))
+							r5 += 32
+
+				elif(self.base_window.sample_naming.number_of_wells == 34):
+					x_coordinate = x_coordinate_34
+					for i in range(0,17):
+						process_img.text((x_coordinate, y_coordinate), str(i+1), font=img_font_1_34, fill=(0,255,0))
+						x_coordinate += well_distance_34
+
+					x_coordinate = x_coordinate - well_distance_34 + pace_34
+					for i in range(17,34):
+						process_img.text((x_coordinate, y_coordinate), str(i+1), font=img_font_1_34, fill=(0,255,0))
+						x_coordinate += well_distance_34
+
+					r1 = 568
+					r2 = 568
+					r3 = 568
+					r4 = 568
+					r5 = 568
+					for i in range(0,34):
+						if(i<7):
+							process_img.text((32,r1), str(i+1) + '. ' + str(self.base_window.sample_naming.wellname_list[i]), font=img_font_3, fill=(0,0,0))
+							r1 += 28
+						elif(i<14):
+							process_img.text((232,r2), str(i+1) + '. ' + str(self.base_window.sample_naming.wellname_list[i]), font=img_font_3, fill=(0,0,0))
+							r2 += 28
+						elif(i<21):
+							process_img.text((432,r3), str(i+1) + '. ' + str(self.base_window.sample_naming.wellname_list[i]), font=img_font_3, fill=(0,0,0))
+							r3 += 28
+						elif(i<28):
+							process_img.text((632,r4), str(i+1) + '. ' + str(self.base_window.sample_naming.wellname_list[i]), font=img_font_3, fill=(0,0,0))
+							r4 += 28
+						else:
+							process_img.text((832,r5), str(i+1) + '. ' + str(self.base_window.sample_naming.wellname_list[i]), font=img_font_3, fill=(0,0,0))
+							r5 += 28
+
+				original_img.save(self.base_window.main_menu.result_path + 'edit_img.png','png')
+
+			except Exception as e:
+				error = messagebox.showerror("ERR 03", str(e), icon = "error")
+				if(error=='ok'):
+					pass 
+
+			self.stage1_labelframe['bg'] = RUNSTAGE_LABELFRAME_INACTIVE_BGD_COLOR
+
+
+			#Button Change 
+			self.capture_button['text'] = Run_Language["ViewResult Button"][language]
+			self.stop_button['text'] = Run_Language["Finish Button"][language]
+			self.stop_button['bg'] = "dodger blue"
+			# self.cammode1_button['state'] = "disable"
+
+			self.stage1_is_running = 0
+			self.stage0_is_running = 1
+
+			# Close camera
+			try:
+				camera.stop_preview()
+			except:
+				pass
+
+			# Turn off all 
+			GPIO.output(BLUE_LIGHT_PIN, GPIO.LOW)
+			GPIO.output(RELAY_PIN, GPIO.LOW)
+			GPIO.output(RUN_LED_PIN, GPIO.LOW)
+
+			# Automail here 
+			self.automail_check()
+
+			# Complete Inform
+			self.tprocess_label = Label(self.preview_labelframe, bg='black', fg='white smoke', text='Processing\r...', font=("Arial",13,'bold'))
+			self.tprocess_label.grid(row=0, column=0, sticky="nsew")
+			self.tprocess_label['text'] = Run_Language["Complete Label"][language]
+			self.tprocess_label['font'] = ('Arial',20, 'bold')
+			self.tprocess_label['fg'] = 'lawn green'
+
+			self.system_is_running = 0
+
+			# Buzzer 
+			for i in range(0,3):
+				GPIO.output(BUZZER_PIN, GPIO.HIGH)
+				sleep(0.7)
+				GPIO.output(BUZZER_PIN, GPIO.LOW)
+				sleep(0.7)
+
+
+	def readFeebackValue(self):
+		pass
+		# v_adc = AnalogIn(ads, ADS.P2)
+		# v_refVoltage = v_adc.voltage
+		# v_realVoltage = round(v_refVoltage * MAX_VOLTAGE_VALUE / DEIVIDE_VOLTAGE_VALUE)
+		# self.vsenseValue_label.config(text = str(v_realVoltage) + ' V')
+
+		# i_adc =  AnalogIn(ads, ADS.P1)
+		# i_refVoltage = i_adc.voltage
+	
+	def automail_check(self):
+		if(account_active and automail1_is_on):
+			shutil.make_archive(self.base_window.main_menu.result_path, format='zip', root_dir = self.base_window.main_menu.result_path)
+			try:
+				sendmail(self.base_window.multi_setting.recipient_email, 
+							self.base_window.main_menu.folderName_set , 
+							'This is an email from VE100 device.',
+							self.base_window.main_menu.result_path_0 + '/' + self.base_window.main_menu.folderName_set + '.zip',
+							self.base_window.main_menu.folderName_set)
+			except Exception as e:
+				try:
+					camera.stop_preview()
+				except:
+					pass
+				error = messagebox.showerror("ERR 02", str(e), icon = "error")
+				if(error=='ok'):
+					pass
+
+	def capture_clicked(self):
+		if(self.capture_button['text'] == Run_Language["Capture Button"][language]):
+			if(self.stage0_is_running):
+				s_cap = s0_set - self.s0_curent
+				if(s_cap<0):
+					s_cap = 60 + s_cap
+					m_cap = m0_set - self.m0_curent - 1
+				else:
+					m_cap = m0_set - self.m0_curent
+				if(m_cap<0):
+					m_cap=0
+
+				output_result = str('stage0_' + '%02d'%m_cap) + ':' + str('%02d'%s_cap) +'.png'
+
+			elif(self.stage1_is_running):
+				s_cap = self.base_window.multi_setting.s1_set - self.s1_curent
+				if(s_cap<0):
+					s_cap = 60 + s_cap
+					m_cap = self.base_window.multi_setting.m1_set - self.m1_curent - 1
+				else:
+					m_cap = self.base_window.multi_setting.m1_set - self.m1_curent
+				if(m_cap<0):
+					m_cap=0
+
+				output_result = str('stage1_' + '%02d'%m_cap) + ':' + str('%02d'%s_cap) +'.png'
+
+			# elif(self.stage2_is_running):
+			# 	s_cap = self.base_window.multi_setting.s2_set - self.s2_curent
+			# 	if(s_cap<0):
+			# 		s_cap = 60 + s_cap
+			# 		m_cap = self.base_window.multi_setting.m2_set - self.m2_curent - 1
+			# 	else:
+			# 		m_cap = self.base_window.multi_setting.m2_set - self.m2_curent
+			# 	if(m_cap<0):
+			# 		m_cap=0
+
+			# 	output_result = str('stage2_' + '%02d'%m_cap) + ':' + str('%02d'%s_cap) +'.png'
+
+			# elif(self.stage3_is_running):
+			# 	s_cap = self.base_window.multi_setting.s3_set - self.s3_curent
+			# 	if(s_cap<0):
+			# 		s_cap = 60 + s_cap
+			# 		m_cap = self.base_window.multi_setting.m3_set - self.m3_curent - 1
+			# 	else:
+			# 		m_cap = self.base_window.multi_setting.m3_set - self.m3_curent
+			# 	if(m_cap<0):
+			# 		m_cap=0
+
+			# 	output_result = str('stage3_' + '%02d'%m_cap) + ':' + str('%02d'%s_cap) +'.png'
+
+			try:
+				camera_capture(self.base_window.main_menu.result_path + output_result)
+				camera.stop_preview()
+				msgbox = messagebox.showinfo('', Run_Language["Picture Saved"][language])
+				# if(msgbox=='ok'):
+				camera_preview((self.preview_x, self.preview_y, self.preview_width, self.preview_height))
+
+			except Exception as e:
+				error = messagebox.showerror("ERR 03",str(e), icon = "error")
+				if(error=='ok'):
+					pass
+
+		else:
+			result_file = filedialog.askopenfilename(initialdir = self.base_window.main_menu.result_path, filetypes=[('png file','*.png')])
+			if result_file is not None:
+				if(result_file[len(result_file)-3:]=='png'):
+					try:
+						self.tprocess_label.destroy()
+					except:
+						pass
+
+					previewframe_width = self.preview_labelframe.winfo_width()
+					previewframe_height = self.preview_labelframe.winfo_height()
+					preview_img_percent  = round(previewframe_width*100/RESULT_IMAGE_WIDTH)
+
+					preview_img = Image.open(result_file)
+					img_original_width, img_original_height = preview_img.size
+					img_scale_width = int(img_original_width * preview_img_percent / 100)
+					img_scale_height = int(img_original_height * preview_img_percent / 100)
+					scale_img = preview_img.resize((img_scale_width, img_scale_height))
+					
+					img_height_shift = round((img_scale_height - previewframe_height)/2) # fix chieu cao cua anh sau khi scale voi chieu cao cua canvas
+					crop_area = (0, img_height_shift, img_scale_width, img_height_shift + previewframe_height)
+					crop_img = scale_img.crop(crop_area)
+					display_img = ImageTk.PhotoImage(crop_img)
+
+					try:
+						display_label.destroy()
+					except:
+						pass
+					display_label =  Label(self.preview_labelframe, image=display_img)
+					display_label.image = display_img
+					display_label.grid(row=0, column=0, sticky="nsew")
+
+				else:
+					pass
+
+
+	def stop_clicked(self):
+		try:
+			camera.stop_preview()
+		except:
+			pass
+
+		msgbox = ""
+		if(self.stop_button['text'] == Run_Language["Stop Button"][language]):
+			msgbox = messagebox.askquestion('', Run_Language["Stop Running"][language], icon = 'question')
+		else:
+			msgbox = messagebox.askquestion('', Run_Language["Back MainMenu"][language], icon = 'question')
+		if(msgbox=='yes'):
+			uart_send(0,0)
+			GPIO.output(RUN_LED_PIN, GPIO.LOW)
+			GPIO.output(RELAY_PIN, GPIO.LOW)
+
+			if(self.stop_button['text'] == Run_Language["Stop Button"][language]):
+				try:
+					camera_capture(self.base_window.main_menu.result_path + 'final_result.png')
+
+					# Create Image with sample name 
+					original_img = Image.open(self.base_window.main_menu.result_path + 'final_result.png')
+					process_img = ImageDraw.Draw(original_img)
+					shape = [(1024, 768), (0,550)]
+					process_img.rectangle(shape, fill="lightgray", outline="lightgray")
+					img_font_1_18 = ImageFont.truetype("/home/pi/VE100/arial.ttf", font_size_18)
+					img_font_1_26 = ImageFont.truetype("/home/pi/VE100/arial.ttf", font_size_26)
+					img_font_1_34 = ImageFont.truetype("/home/pi/VE100/arial.ttf", font_size_34)
+					img_font_2 = ImageFont.truetype("/home/pi/VE100/arial.ttf", 23)
+					img_font_3 = ImageFont.truetype("/home/pi/VE100/arial.ttf", 17)
+
+					if(self.base_window.sample_naming.number_of_wells == 18):
+						x_coordinate = x_coordinate_18
+						for i in range(0,9):
+							process_img.text((x_coordinate, y_coordinate), str(i+1), font=img_font_1_18, fill=(0,255,0))
+							x_coordinate += well_distance_18
+
+						x_coordinate = x_coordinate - well_distance_18 + pace_18
+						for i in range(9,18):
+							process_img.text((x_coordinate, y_coordinate), str(i+1), font=img_font_1_18, fill=(0,255,0))
+							x_coordinate += well_distance_18
+
+						r1 = 568
+						r2 = 568
+						r3 = 568
+						r4 = 568
+						r5 = 568
+						for i in range(0,18):
+							if(i<6):
+								process_img.text((32,r1), str(i+1) + '. ' + str(self.base_window.sample_naming.wellname_list[i]), font=img_font_2, fill=(0,0,0))
+								r1 += 32
+							elif(i<12):
+								process_img.text((232,r2), str(i+1) + '. ' + str(self.base_window.sample_naming.wellname_list[i]), font=img_font_2, fill=(0,0,0))
+								r2 += 32
+							else:
+								process_img.text((432,r3), str(i+1) + '. ' + str(self.base_window.sample_naming.wellname_list[i]), font=img_font_2, fill=(0,0,0))
+								r3 += 32
+					
+					elif(self.base_window.sample_naming.number_of_wells == 26):
+						x_coordinate = x_coordinate_26
+						for i in range(0,13):
+							process_img.text((x_coordinate, y_coordinate), str(i+1), font=img_font_1_26, fill=(0,255,0))
+							x_coordinate += well_distance_26
+
+						x_coordinate = x_coordinate - well_distance_26 + pace_26
+						for i in range(13,26):
+							process_img.text((x_coordinate, y_coordinate), str(i+1), font=img_font_1_26, fill=(0,255,0))
+							x_coordinate += well_distance_26
+
+						r1 = 568
+						r2 = 568
+						r3 = 568
+						r4 = 568
+						r5 = 568
+						for i in range(0,26):
+							if(i<6):
+								process_img.text((32,r1), str(i+1) + '. ' + str(self.base_window.sample_naming.wellname_list[i]), font=img_font_2, fill=(0,0,0))
+								r1 += 32
+							elif(i<12):
+								process_img.text((232,r2), str(i+1) + '. ' + str(self.base_window.sample_naming.wellname_list[i]), font=img_font_2, fill=(0,0,0))
+								r2 += 32
+							elif(i<18):
+								process_img.text((432,r3), str(i+1) + '. ' + str(self.base_window.sample_naming.wellname_list[i]), font=img_font_2, fill=(0,0,0))
+								r3 += 32
+							elif(i<24):
+								process_img.text((632,r4), str(i+1) + '. ' + str(self.base_window.sample_naming.wellname_list[i]), font=img_font_2, fill=(0,0,0))
+								r4 += 32
+							else:
+								process_img.text((832,r5), str(i+1) + '. ' + str(self.base_window.sample_naming.wellname_list[i]), font=img_font_2, fill=(0,0,0))
+								r5 += 32
+
+					elif(self.base_window.sample_naming.number_of_wells == 34):
+						x_coordinate = x_coordinate_34
+						for i in range(0,17):
+							process_img.text((x_coordinate, y_coordinate), str(i+1), font=img_font_1_34, fill=(0,255,0))
+							x_coordinate += well_distance_34
+
+						x_coordinate = x_coordinate - well_distance_34 + pace_34
+						for i in range(17,34):
+							process_img.text((x_coordinate, y_coordinate), str(i+1), font=img_font_1_34, fill=(0,255,0))
+							x_coordinate += well_distance_34
+
+						r1 = 568
+						r2 = 568
+						r3 = 568
+						r4 = 568
+						r5 = 568
+						for i in range(0,34):
+							if(i<7):
+								process_img.text((32,r1), str(i+1) + '. ' + str(self.base_window.sample_naming.wellname_list[i]), font=img_font_3, fill=(0,0,0))
+								r1 += 28
+							elif(i<14):
+								process_img.text((232,r2), str(i+1) + '. ' + str(self.base_window.sample_naming.wellname_list[i]), font=img_font_3, fill=(0,0,0))
+								r2 += 28
+							elif(i<21):
+								process_img.text((432,r3), str(i+1) + '. ' + str(self.base_window.sample_naming.wellname_list[i]), font=img_font_3, fill=(0,0,0))
+								r3 += 28
+							elif(i<28):
+								process_img.text((632,r4), str(i+1) + '. ' + str(self.base_window.sample_naming.wellname_list[i]), font=img_font_3, fill=(0,0,0))
+								r4 += 28
+							else:
+								process_img.text((832,r5), str(i+1) + '. ' + str(self.base_window.sample_naming.wellname_list[i]), font=img_font_3, fill=(0,0,0))
+								r5 += 28
+
+					original_img.save(self.base_window.main_menu.result_path + 'edit_img.png','png')
+				except Exception as e:
+					error = messagebox.showerror("ERR 03", str(e), icon = "error")
+					if(error=='ok'):
+						pass
+				
+			GPIO.output(BLUE_LIGHT_PIN, GPIO.LOW)
+
+			try:
+				app.after_cancel(self.autocap_solve)
+			except:
+				pass
+			try:
+				self.s0_label.after_cancel(self.s0_solve)
+			except:
+				pass
+			try:
+				self.s1_label.after_cancel(self.s1_solve)
+			except:
+				pass
+			# try:
+			# 	self.s2_label.after_cancel(self.s2_solve)
+			# except:
+			# 	pass
+			# try:
+			# 	self.s3_label.after_cancel(self.s3_solve)
+			# except:
+			# 	pass
+			
+			if(self.stop_button['text'] == Run_Language["Stop Button"][language]):
+				self.automail_check()
+			
+			self.system_is_running = 0
+
+			self.base_window.switch_page(self.base_window.main_menu)
+			self.base_window.reset()
+								
+				
+		else:
+			if(self.system_is_running == 1):
+				GPIO.output(RUN_LED_PIN, GPIO.HIGH)
+				GPIO.output(BLUE_LIGHT_PIN, GPIO.HIGH)
+				GPIO.output(RELAY_PIN, GPIO.HIGH)
+				camera_preview((self.preview_x, self.preview_y, self.preview_width, self.preview_height))
+
+	
+	def mode1_clicked(self):
+		if(self.system_is_running):
+			global camera
+			self.cam_mode = 1
+			self.cammode1_button['bg'] = CAMMODE_BUTTON_ACTIVE_BGD_COLOR
+			self.cammode2_button['bg'] = CAMMODE_BUTTON_INACTIVE_BGD_COLOR
+
+			# self.camera_framerate = 1
+
+			try:
+				camera.stop_preview()
+			except:
+				pass
+			camera.framerate = 1
+			camera.exposure_mode = 'sports'
+			sleep(1)
+			camera_preview((self.preview_x, self.preview_y, self.preview_width, self.preview_height))
+
+			# try:
+			# 	self.camera.stop_preview()
+			# except:
+			# 	pass
+			# self.camera.start_preview(self.camera_framerate)
+			# self.camera.set_framerate(self.camera_framerate)
+
+
+	def mode2_clicked(self):
+		if(self.system_is_running):
+			global camera
+			self.cam_mode = 1
+			self.cammode1_button['bg'] = CAMMODE_BUTTON_INACTIVE_BGD_COLOR
+			self.cammode2_button['bg'] = CAMMODE_BUTTON_ACTIVE_BGD_COLOR
+
+			# self.camera_framerate = 3
+
+			try:
+				camera.stop_preview()
+			except:
+				pass
+			camera.framerate = 3
+			camera.exposure_mode = 'sports'
+			sleep(1)
+			camera_preview((self.preview_x, self.preview_y, self.preview_width, self.preview_height))
+
+			# try:
+			# 	self.camera.stop_preview()
+			# except:
+			# 	pass
+			# self.camera.start_preview(self.camera_framerate)
+			# self.camera.set_framerate(self.camera_framerate)
+	
+	def runStage_change(self):
+		pass 
+	
+	def auto_capture(self):
+		if(self.base_window.single_setting.autocap_set !=1 or self.auto_capture_call !=0):
+			output_result = 'auto_cap_' + str(self.auto_capture_count) +'.png'
+			try:
+				camera_capture(self.base_window.main_menu.result_path + output_result)
+			except Exception as e:
+				error = messagebox.showerror("ERR 03", str(e), icon = "error")
+				if(error=='ok'):
+					pass
+			self.auto_capture_count += 1
+		self.auto_capture_call += 1
+		self.autocap_solve = app.after((self.base_window.single_setting.autocap_set*60000), self.auto_capture)
+
+	def update_frame(self):
+		self.m0_curent = m0_set
+		self.s0_curent = s0_set
+		self.m1_curent = self.base_window.single_setting.m1_set
+		self.s1_curent = self.base_window.single_setting.s1_set
+
+		###### CONTENT IN STAGE 0 ######
+		self.settingValue0_label = Label(self.stage0_labelframe_1, 
+								fg = STAGE_CONTENT_TXT_COLOR, 
+								text = str(voltage0_set) + 'V - ' + str(m0_set) + ':' + str(s0_set), 
+								font = STAGE_CONTENT_TXT_FONT, 
+								bg = RUNSTAGE_LABELFRAME_INACTIVE_BGD_COLOR)
+		self.settingValue0_label.grid(row=0, column=0, sticky="nsew")
+
+		self.m0_label = Label(self.stage0_labelframe_2, 
+						fg = STAGE_CONTENT_TXT_COLOR, 
+						text = str(m0_set),
+						font = STAGE_CONTENT_TXT_FONT, 
+						anchor='e',
+						bg = RUNSTAGE_LABELFRAME_INACTIVE_BGD_COLOR)
+		self.m0_label.grid(row=0, column=0, sticky="nsew")
+		self.twodot0_label = Label(self.stage0_labelframe_2, 
+							fg = STAGE_CONTENT_TXT_COLOR, 
+							text = ':', 
+							font = STAGE_CONTENT_TXT_FONT, 
+							bg = RUNSTAGE_LABELFRAME_INACTIVE_BGD_COLOR)
+		self.twodot0_label.grid(row=0, column=1, sticky="nsew")
+		self.s0_label = Label(self.stage0_labelframe_2, 
+						fg = STAGE_CONTENT_TXT_COLOR, 
+						text = str(s0_set), 
+						anchor='w',
+						font = STAGE_CONTENT_TXT_FONT, 
+						bg = RUNSTAGE_LABELFRAME_INACTIVE_BGD_COLOR)
+		self.s0_label.grid(row=0, column=2, sticky="nsew")
+
+
+		###### CONTENT IN STAGE 1 ######
+		self.settingValue1_label = Label(self.stage1_labelframe_1, 
+								fg = STAGE_CONTENT_TXT_COLOR, 
+								text = str(self.base_window.single_setting.voltage1_set) + 'V - ' + str('%02d'%self.base_window.single_setting.m1_set) + ':' + str('%02d'%self.base_window.single_setting.s1_set), 
+								font = STAGE_CONTENT_TXT_FONT, 
+								bg = RUNSTAGE_LABELFRAME_INACTIVE_BGD_COLOR)
+		self.settingValue1_label.grid(row=0, column=0, sticky="nsew")
+
+		self.m1_label = Label(self.stage1_labelframe_2, 
+						fg = STAGE_CONTENT_TXT_COLOR, 
+						text = str('%.02d'%self.base_window.single_setting.m1_set),
+						anchor = 'e',
+						font = STAGE_CONTENT_TXT_FONT, 
+						bg = RUNSTAGE_LABELFRAME_INACTIVE_BGD_COLOR)
+		self.m1_label.grid(row=0, column=0, sticky="nsew")
+		self.twodot1_label = Label(self.stage1_labelframe_2, 
+							fg = STAGE_CONTENT_TXT_COLOR, 
+							text = ':', 
+							font = STAGE_CONTENT_TXT_FONT, 
+							bg = RUNSTAGE_LABELFRAME_INACTIVE_BGD_COLOR)
+		self.twodot1_label.grid(row=0, column=1, sticky="nsew")
+		self.s1_label = Label(self.stage1_labelframe_2, 
+						fg = STAGE_CONTENT_TXT_COLOR, 
+						text = str('%.02d'%self.base_window.single_setting.s1_set), 
+						anchor = 'w',
+						font = STAGE_CONTENT_TXT_FONT, 
+						bg = RUNSTAGE_LABELFRAME_INACTIVE_BGD_COLOR)
+		self.s1_label.grid(row=0, column=2, sticky="nsew")
+
+		
+		# if(self.cam_mode == 1):
+		# 	self.mode1_clicked()
+		# else:
+		# 	self.mode2_clicked()
+
+		GPIO.output(BLUE_LIGHT_PIN, GPIO.HIGH)
+		GPIO.output(RELAY_PIN, GPIO.HIGH)
+		GPIO.output(RUN_LED_PIN, GPIO.HIGH)
+
+		self.tprocess_label.update_idletasks()
+
+		self.preview_x = self.tprocess_label.winfo_rootx()
+		self.preview_y = self.tprocess_label.winfo_rooty()
+		self.preview_width = self.tprocess_label.winfo_width()
+		self.preview_height = self.tprocess_label.winfo_height()
+
+		print("preview_x: ", self.preview_x)
+		print("preview_y: ", self.preview_y)
+		print("preview_width: ", self.preview_width)
+		print("preview_height: ", self.preview_height)
+		camera_preview((self.preview_x, self.preview_y, self.preview_width, self.preview_height))
+
+		
+		# self.camera.start_preview()
+
+		if(voltage0_set != 0):
+			uart_send(voltage0_set, 1)
+			self.stage0_counter()
+		else:
+			uart_send(self.voltage1_set, 1)
+			self.stage1_counter()
+
+		if(self.base_window.single_setting.autocap_set != 0):
+			self.auto_capture()
 
 
 class MultiRun_Screen(Frame):
@@ -1173,7 +2163,7 @@ class MultiRun_Screen(Frame):
 			self.m0_label.config(text = '00')
 			self.s0_label.config(text = '00')
 			try: 
-				self.s0_label.after_cancel(self.s1_solve)
+				self.s0_label.after_cancel(self.s0_solve)
 			except: 
 				pass
 
@@ -1514,10 +2504,11 @@ class MultiRun_Screen(Frame):
 
 
 	def readFeebackValue(self):
-		v_adc = AnalogIn(ads, ADS.P2)
-		v_refVoltage = v_adc.voltage
-		v_realVoltage = round(v_refVoltage * MAX_VOLTAGE_VALUE / DEIVIDE_VOLTAGE_VALUE)
-		self.vsenseValue_label.config(text = str(v_realVoltage) + ' V')
+		pass
+		# v_adc = AnalogIn(ads, ADS.P2)
+		# v_refVoltage = v_adc.voltage
+		# v_realVoltage = round(v_refVoltage * MAX_VOLTAGE_VALUE / DEIVIDE_VOLTAGE_VALUE)
+		# self.vsenseValue_label.config(text = str(v_realVoltage) + ' V')
 
 		# i_adc =  AnalogIn(ads, ADS.P1)
 		# i_refVoltage = i_adc.voltage
@@ -2020,7 +3011,380 @@ class MultiRun_Screen(Frame):
 			uart_send(self.voltage1_set, 1)
 			self.stage1_counter()
 
+class SingleSetting_Screen(Frame):
+	def __init__(self, master):
+		super().__init__(master)
+		self.base_window = master
+		
+		self.rowconfigure(0, weight=1)
+		self.columnconfigure(0, weight=1)
 
+		self.voltage1_set = 0
+		self.voltage2_set = 0
+		self.voltage3_set = 0
+		self.m1_set = 0
+		self.m2_set = 0
+		self.m3_set = 0
+		self.s1_set = 0
+		self.s2_set = 0
+		self.s3_set = 0
+
+		# Base frame create
+		self.base_frame = Frame(self,bg=MAIN_FUNCTION_FRAME_BGD_COLOR)
+		self.base_frame.grid(row=0, column=0, sticky='nsew')
+		self.base_frame.rowconfigure(0, weight=1)
+		self.base_frame.rowconfigure(1, weight=10)
+		self.base_frame.rowconfigure(2, weight=1)
+		self.base_frame.columnconfigure(0, weight=1)
+
+		self.title_frame = Frame(self.base_frame, bg = MAIN_FUNCTION_FRAME_BGD_COLOR)
+		self.title_frame.grid(row=0, column=0, sticky='nsew')
+		self.title_frame.rowconfigure(0, weight=1)
+		self.title_frame.columnconfigure(0, weight=1)
+		self.title_frame.grid_propagate(False)
+
+		self.work_frame = Frame(self.base_frame, bg = MAIN_FUNCTION_FRAME_BGD_COLOR)
+		self.work_frame.grid(row=1, column=0, sticky='nsew')
+		self.work_frame.rowconfigure(0, weight=5)
+		self.work_frame.rowconfigure(1, weight=1)
+		self.work_frame.columnconfigure(0, weight=1)
+		self.work_frame.grid_propagate(False)
+
+		self.button_frame = Frame(self.base_frame, bg = BUTTON_FRAME_BGD_COLOR)
+		self.button_frame.grid(row=2, column=0, sticky='nsew')
+		self.button_frame.rowconfigure(0, weight=1)
+		self.button_frame.columnconfigure(0, weight=1)
+		self.button_frame.columnconfigure(1, weight=1)
+		self.button_frame.columnconfigure(2, weight=1)
+		self.button_frame.columnconfigure(3, weight=1)
+		self.button_frame.columnconfigure(4, weight=1)
+		self.button_frame.columnconfigure(5, weight=1)
+		self.button_frame.columnconfigure(6, weight=1)
+		self.button_frame.grid_propagate(False)
+
+		# In Title frame
+		self.title_label = Label(self.title_frame,
+								text = Setting_Language['Setting Label'][language],
+								font = MAIN_TITLE_TXT_FONT,
+								bg = MAIN_TITLE_BGD_COLOR,
+								fg = MAIN_TITLE_TXT_COLOR)
+		self.title_label.grid(row=0, column=0, sticky="snew")
+		
+		# In work frame 
+		self.work_frame_1 = Frame(self.work_frame, bg = BUTTON_FRAME_BGD_COLOR)
+		self.work_frame_1.grid(row=0, column=0, sticky="snew")
+		self.work_frame_1.columnconfigure(0, weight=1)
+		self.work_frame_1.columnconfigure(1, weight=1)
+		self.work_frame_1.columnconfigure(2, weight=1)
+		self.work_frame_1.rowconfigure(0, weight=1)
+		self.work_frame_1.pack_propagate(0)
+		self.work_frame_2 = Frame(self.work_frame, bg = MAIN_MENU_LABELFRAME_BGD_COLOR)
+		self.work_frame_2.grid(row=1, column=0, sticky="snew")
+		self.work_frame_2.columnconfigure(0, weight=1)
+		self.work_frame_2.rowconfigure(0, weight=1)
+		self.work_frame_2.pack_propagate(0)
+
+
+		self.stage1_labelframe = LabelFrame(self.work_frame_1, 
+										bg = BUTTON_FRAME_BGD_COLOR,
+										fg = MAIN_MENU_LABELFRAME_TXT_COLOR,
+										text = Setting_Language["Stage LabelFrame"][language] + " 1",
+										highlightbackground = MAIN_MENU_LABELFRAME_BORDER_COLOR,
+										font = MAIN_MENU_LABELFRAME_TXT_FONT)
+		self.stage1_labelframe.grid(row=0, column=1, sticky='nsew')
+		self.stage1_labelframe.rowconfigure(0, weight=1)
+		self.stage1_labelframe.rowconfigure(1, weight=1)
+		self.stage1_labelframe.rowconfigure(1, weight=1)
+		self.stage1_labelframe.columnconfigure(0, weight=1)
+		self.stage1_labelframe.pack_propagate(0)
+
+		self.stage1_labelframe_1= LabelFrame(self.stage1_labelframe, 
+										bg = MAIN_TITLE_BGD_COLOR,
+										fg = SETTINGPARA_LABELFRAME_TXT_COLOR,
+										text = Setting_Language["VoltageSetting LabelFrame"][language],
+										highlightbackground = MAIN_MENU_LABELFRAME_BORDER_COLOR,
+										font = SETTINGPARA_LABELFRAME_TXT_FONT)
+		self.stage1_labelframe_1.grid(row=0, column=0, padx=10, pady=10, sticky='nsew')
+		self.stage1_labelframe_1.rowconfigure(0, weight=1)
+		self.stage1_labelframe_1.columnconfigure(0, weight=1)
+		self.stage1_labelframe_1.pack_propagate(0)
+
+		self.stage1_labelframe_2= LabelFrame(self.stage1_labelframe, 
+										bg = MAIN_TITLE_BGD_COLOR,
+										fg = SETTINGPARA_LABELFRAME_TXT_COLOR,
+										text = Setting_Language["TimerSetting LabelFrame"][language],
+										highlightbackground = MAIN_MENU_LABELFRAME_BORDER_COLOR,
+										font = SETTINGPARA_LABELFRAME_TXT_FONT)
+		self.stage1_labelframe_2.grid(row=1, column=0, padx=10, pady=10, sticky='nsew')
+		self.stage1_labelframe_2.rowconfigure(0, weight=1)
+		self.stage1_labelframe_2.columnconfigure(0, weight=1)
+		self.stage1_labelframe_2.columnconfigure(1, weight=1)
+		self.stage1_labelframe_2.columnconfigure(2, weight=1)
+		self.stage1_labelframe_2.pack_propagate(0)
+
+		self.stage1_labelframe_3= LabelFrame(self.stage1_labelframe, 
+										bg = MAIN_TITLE_BGD_COLOR,
+										fg = SETTINGPARA_LABELFRAME_TXT_COLOR,
+										text = Setting_Language["AutoCaptureSetting LabelFrame"][language],
+										highlightbackground = MAIN_MENU_LABELFRAME_BORDER_COLOR,
+										font = SETTINGPARA_LABELFRAME_TXT_FONT)
+		self.stage1_labelframe_3.grid(row=2, column=0, padx=10, pady=10, sticky='nsew')
+		self.stage1_labelframe_3.rowconfigure(0, weight=1)
+		self.stage1_labelframe_3.columnconfigure(0, weight=1)
+		self.stage1_labelframe_3.pack_propagate(0)
+		
+
+		##### In stage1_labelframe_1 #####
+		self.voltage1_entry = Entry(self.stage1_labelframe_1, 
+							fg = SETTINGPARA_ENTRY_TXT_COLOR, 
+							font = SETTINGPARA_ENTRY_TXT_FONT,
+							justify = 'center',
+							bg = SETTINGPARA_LABELFRAME_BGD_COLOR,
+							width = 3)
+		self.voltage1_entry.grid(row=0, column=0, sticky='nsew')
+		self.voltage1_entry.insert(0, voltage_set)
+
+		##### In stage1_labelframe_2 #####
+		self.m1_entry = Entry(self.stage1_labelframe_2, 
+						fg = SETTINGPARA_ENTRY_TXT_COLOR, 
+						font = SETTINGPARA_ENTRY_TXT_FONT,
+						bg = SETTINGPARA_LABELFRAME_BGD_COLOR,
+						justify = 'center',
+						width = 3)
+		self.m1_entry.grid(row=0, column=0, sticky='nsew')
+		self.m1_entry.insert(0, str('%02d'%m_set))
+
+		self.twodot_label_1 = Label(self.stage1_labelframe_2, 
+							fg = SETTINGPARA_ENTRY_TXT_COLOR, 
+							bg = SETTINGPARA_LABELFRAME_BGD_COLOR, 
+							font = SETTINGPARA_ENTRY_TXT_FONT,
+							text =':')
+		self.twodot_label_1.grid(row=0, column=1, sticky='nsew')
+
+		self.s1_entry = Entry(self.stage1_labelframe_2, 
+						fg = SETTINGPARA_ENTRY_TXT_COLOR, 
+						font = SETTINGPARA_ENTRY_TXT_FONT,
+						bg = SETTINGPARA_LABELFRAME_BGD_COLOR,
+						justify = 'center',
+						width = 3)
+		self.s1_entry.grid(row=0, column=2, sticky='nsew')
+		self.s1_entry.insert(0, str('%02d'%s_set))
+
+		##### In stage1_labelframe_3 #####
+		self.autocap_entry = Entry(self.stage1_labelframe_3, 
+							fg = SETTINGPARA_ENTRY_TXT_COLOR, 
+							font = SETTINGPARA_ENTRY_TXT_FONT,
+							justify = 'center',
+							bg = SETTINGPARA_LABELFRAME_BGD_COLOR,
+							width = 3)
+		self.autocap_entry.grid(row=0, column=0, sticky='nsew')
+		self.autocap_entry.insert(0, auto_capture_timer_set)
+
+
+		# In work_frame_2
+		self.automail_labelframe = LabelFrame(self.work_frame_2, 
+										bg = MAIN_TITLE_BGD_COLOR, 
+										fg = SETTINGPARA_LABELFRAME_TXT_COLOR, 
+										font = MAIN_MENU_LABELFRAME_TXT_FONT,
+										text = Setting_Language["AutoMail LabelFrame"][language])
+		self.automail_labelframe.grid(row=0, column=0, sticky="nsew")
+		self.automail_labelframe.columnconfigure(0, weight=2)
+		self.automail_labelframe.columnconfigure(1, weight=10)
+		self.automail_labelframe.rowconfigure(0, weight=1)
+
+		self.automail_button_frame =  Frame(self.automail_labelframe, bg=MAIN_FUNCTION_FRAME_BGD_COLOR)
+		self.automail_button_frame.grid(row=0, column=0, sticky='nsew')
+		self.automail_button_frame.columnconfigure(0, weight=1)
+		self.automail_button_frame.columnconfigure(1, weight=1)
+		self.automail_button_frame.rowconfigure(0, weight=1)
+		self.automail_on_button = Button(self.automail_button_frame,
+								bd = 0,
+								text =  Setting_Language["AutoMailOn Button"][language], 
+								command = self.automail_on_click)
+		self.automail_on_button.grid(row=0, column=0, sticky="nsew")
+		self.automail_off_button = Button(self.automail_button_frame, 
+									bd = 0,
+									text = Setting_Language["AutoMailOff Button"][language], 
+									command = self.automail_off_click)
+		self.automail_off_button.grid(row=0, column=1, sticky="nsew")
+
+		self.automail_recipient_frame =  Frame(self.automail_labelframe, bg=MAIN_FUNCTION_FRAME_BGD_COLOR)
+		self.automail_recipient_frame.grid(row=0, column=1, sticky='nsew')
+		self.automail_recipient_frame.columnconfigure(0, weight=1)
+		self.automail_recipient_frame.columnconfigure(1, weight=1)
+		self.automail_recipient_frame.columnconfigure(2, weight=5)
+		self.automail_recipient_frame.rowconfigure(0, weight=1)
+
+		self.recipient_label = Label(self.automail_recipient_frame, 
+							bg = MAIN_FUNCTION_FRAME_BGD_COLOR, 
+							text = Setting_Language["AutoMailRecipient Label"][language], 
+							font = AUTOMAIL_LABEL_TXT_FONT)
+		self.recipient_label.grid(row=0, column=1, sticky="we")
+		self.recipient_entry = Entry(self.automail_recipient_frame, 
+							justify = 'left',
+							font = AUTOMAIL_ENTRY_TXT_FONT)
+		self.recipient_entry.grid(row=0, column=2, sticky="nsew")
+		
+
+		# ~ if(account_active):
+			# ~ self.automail_on_button['state'] = "normal"
+			# ~ self.automail_off_button['state'] = "normal"
+			# ~ if(automail2_is_on):
+				# ~ self.automail_on_button['bg'] = AUTOMAILON_BUTTON_BGD_COLOR
+				# ~ self.automail_off_button['bg'] = AUTOMAIL_BUTTON_BGD_COLOR
+				# ~ self.recipient_entry['state'] = "normal"
+				# ~ self.recipient_entry.insert(0, autofill_email)
+			# ~ else:
+				# ~ self.automail_off_button['bg'] = AUTOMAILOFF_BUTTON_BGD_COLOR
+				# ~ self.automail_on_button['bg'] = AUTOMAIL_BUTTON_BGD_COLOR
+		# ~ else: 
+			# ~ self.recipient_entry['state'] = "disabled"
+			# ~ self.automail_on_button['state'] = "disabled"
+			# ~ self.automail_off_button['state'] = "disabled"
+
+		# In Button frame
+		self.run_button = Button(self.button_frame, 
+								text = Setting_Language["Run Button"][language], 
+								font = SWITCHPAGE_BUTTON_TXT_FONT, 
+								fg = SWITCHPAGE_BUTTON_TXT_COLOR, 
+								bg = SWITCHPAGE_BUTTON_BGD_COLOR, 
+								command = self.run_clicked)
+		self.run_button.grid(row=0, column=6, padx=2, pady=2, sticky="nsew")
+		self.back_button = Button(self.button_frame, 
+								text = Setting_Language["Back Button"][language], 
+								font = SWITCHPAGE_BUTTON_TXT_FONT, 
+								fg = SWITCHPAGE_BUTTON_TXT_COLOR, 
+								bg = SWITCHPAGE_BUTTON_BGD_COLOR, 
+								command = self.back_clicked)
+		self.back_button.grid(row=0, column=0, padx=2, pady=2, sticky="nsew")
+		self.save_button = Button(self.button_frame, 
+								text = Setting_Language["Save Button"][language], 
+								font = SWITCHPAGE_BUTTON_TXT_FONT, 
+								fg = SWITCHPAGE_BUTTON_TXT_COLOR, 
+								bg = SWITCHPAGE_BUTTON_BGD_COLOR, 
+								command = self.save_clicked)
+		self.save_button.grid(row=0, column=3, padx=2, pady=2, sticky="nsew")
+
+	def update_frame(self):
+		if(account_active):
+			self.automail_on_button['state'] = "normal"
+			self.automail_off_button['state'] = "normal"
+			if(automail1_is_on):
+				self.automail_on_button['bg'] = AUTOMAILON_BUTTON_BGD_COLOR
+				self.automail_off_button['bg'] = AUTOMAIL_BUTTON_BGD_COLOR
+				self.recipient_entry['state'] = "normal"
+				self.recipient_entry.insert(0, autofill_email)
+			else:
+				self.automail_off_button['bg'] = AUTOMAILOFF_BUTTON_BGD_COLOR
+				self.automail_on_button['bg'] = AUTOMAIL_BUTTON_BGD_COLOR
+		else: 
+			self.recipient_entry['state'] = "disabled"
+			self.automail_on_button['state'] = "disabled"
+			self.automail_off_button['state'] = "disabled"
+			
+	def automail_on_click(self):
+		global automail1_is_on
+		automail1_is_on = 1
+		self.automail_on_button['bg'] = AUTOMAILON_BUTTON_BGD_COLOR
+		self.automail_off_button['bg'] = AUTOMAIL_BUTTON_BGD_COLOR
+		self.recipient_entry['state'] = "normal"
+		if(self.recipient_entry.get()==''):
+			self.recipient_entry.insert(0, autofill_email)
+
+	def automail_off_click(self):
+		global automail1_is_on
+		automail1_is_on = 0
+		self.automail_on_button['bg'] = AUTOMAIL_BUTTON_BGD_COLOR
+		self.automail_off_button['bg'] = AUTOMAILOFF_BUTTON_BGD_COLOR
+		self.recipient_entry.delete(0,END)
+		self.recipient_entry['state'] = 'disable'
+	
+	def save_clicked(self):
+		msg = messagebox.askquestion("", Setting_Language["Save Setting"][language])
+		if(msg=='yes'):
+			if(self.voltage1_entry.get()==''):
+				messagebox.showwarning("", Setting_Language["Voltage Empty"][language])
+			elif(self.m1_entry.get()=='' or self.s1_entry.get()==''):
+				messagebox.showwarning("", Setting_Language["Timer Empty"][language])
+			elif((self.voltage1_entry.get().isnumeric())==0 ):
+				messagebox.showwarning("", Setting_Language["Voltage Overflow Value"][language])
+			elif((self.m1_entry.get().isnumeric())==0):
+				messagebox.showwarning("", Setting_Language["Minute Overflow Value"][language])
+			elif((self.s1_entry.get().isnumeric())==0 ):
+				messagebox.showwarning("", Setting_Language["Second Overflow Value"][language])
+			elif(int(self.voltage1_entry.get()) < VOLTAGE_MIN_VALUE or int(self.voltage1_entry.get()) > VOLTAGE_MAX_VALUE):
+				messagebox.showwarning("", Setting_Language["Voltage Overflow Value"][language])
+			elif(int(self.m1_entry.get()) < MINUTE_MIN_VALUE or int(self.m1_entry.get()) > MINUTE_MAX_VALUE):
+				messagebox.showwarning("", Setting_Language["Minute Overflow Value"][language])
+			elif(int(self.s1_entry.get()) < SECOND_MIN_VALUE or int(self.s1_entry.get()) > SECOND_MAX_VALUE):
+				messagebox.showwarning("", Setting_Language["Second Overflow Value"][language])
+			elif(self.autocap_entry.get() == "" or (self.autocap_entry.get().isnumeric())==0):
+				messagebox.showwarning("", Setting_Language["AutoCap Empty"][language])
+			elif((self.recipient_entry.get()=='' or self.recipient_entry.get()=='@gmail.com') and automail1_is_on):
+				messagebox.showwarning("", Setting_Language["Email Empty"][language])
+			else:
+				self.voltage1_set = int(self.voltage1_entry.get())
+				self.m1_set = int(self.m1_entry.get())
+				self.s1_set = int(self.s1_entry.get())
+				self.autocap_set = int(self.autocap_entry.get())
+
+				fw = open('/home/pi/VE100/parameters1.txt','w')
+				fw.writelines(str(self.voltage1_set) + '\n')
+				fw.writelines(str('%02d'%self.m1_set) + str('%02d'%self.s1_set) + '\n')
+				fw.writelines(str(self.autocap_set) + '\n')
+				fw.writelines(str(automail1_is_on) + '\n')
+				fw.close()
+				messagebox.showinfo("", Setting_Language["Saved"][language])
+
+	def back_clicked(self):
+		self.base_window.switch_page(self.base_window.sample_naming)
+
+		self.base_window.frame_list.remove(self.base_window.single_setting)
+		del self.base_window.single_setting
+		self.base_window.single_setting = SingleSetting_Screen(self.base_window)
+		self.base_window.frame_list.append(self.base_window.single_setting)
+
+	def run_clicked(self):
+		if(self.voltage1_entry.get()==''):
+			messagebox.showwarning("", Setting_Language["Voltage Empty"][language])
+		elif(self.m1_entry.get()=='' or self.s1_entry.get()==''):
+			messagebox.showwarning("", Setting_Language["Timer Empty"][language])
+		elif((self.voltage1_entry.get().isnumeric())==0 ):
+			messagebox.showwarning("", Setting_Language["Voltage Overflow Value"][language])
+		elif((self.m1_entry.get().isnumeric())==0):
+			messagebox.showwarning("", Setting_Language["Minute Overflow Value"][language])
+		elif((self.s1_entry.get().isnumeric())==0 ):
+			messagebox.showwarning("", Setting_Language["Second Overflow Value"][language])
+		elif(int(self.voltage1_entry.get()) < VOLTAGE_MIN_VALUE or int(self.voltage1_entry.get()) > VOLTAGE_MAX_VALUE):
+			messagebox.showwarning("", Setting_Language["Voltage Overflow Value"][language])
+		elif(int(self.m1_entry.get()) < MINUTE_MIN_VALUE or int(self.m1_entry.get()) > MINUTE_MAX_VALUE):
+			messagebox.showwarning("", Setting_Language["Minute Overflow Value"][language])
+		elif(int(self.s1_entry.get()) < SECOND_MIN_VALUE or int(self.s1_entry.get()) > SECOND_MAX_VALUE):
+			messagebox.showwarning("", Setting_Language["Second Overflow Value"][language])
+		elif(self.autocap_entry.get() == "" or (self.autocap_entry.get().isnumeric())==0):
+			messagebox.showwarning("", Setting_Language["AutoCap Empty"][language])
+		elif((self.recipient_entry.get()=='' or self.recipient_entry.get()=='@gmail.com') and automail1_is_on):
+			messagebox.showwarning("", Setting_Language["Email Empty"][language])
+		
+		else:
+			subprocess.call(["scrot", self.base_window.main_menu.result_path + 'parameters.jpg'])
+
+			global autofill_email 
+			if(automail1_is_on):
+				self.recipient_email = self.recipient_entry.get()
+				fw = open('/home/pi/VE100/.oldemail.txt', 'w')
+				fw.writelines(self.recipient_email + '\n')
+				fw.close()
+				autofill_email = self.recipient_email
+
+			self.voltage1_set = self.voltage1_entry.get()
+			self.m1_set = int(self.m1_entry.get())
+			self.s1_set = int(self.s1_entry.get())
+			self.autocap_set = int(self.autocap_entry.get())
+
+			sleep(2)
+			self.base_window.switch_page(self.base_window.single_run)
+			self.base_window.single_run.update_frame()
 
 class MultiSetting_Screen(Frame):
 	def __init__(self, master):
@@ -2430,9 +3794,35 @@ class MultiSetting_Screen(Frame):
 		if(msg=='yes'):
 			if(self.voltage1_entry.get()=='' or self.voltage2_entry.get()=='' or self.voltage3_entry.get()==''):
 				messagebox.showwarning("", Setting_Language["Voltage Empty"][language])
-			elif(self.m1_entry.get()=='' or self.m2_entry.get()=='' or self.m3_entry.get()=='' or
-					self.s1_entry.get()=='' or self.s2_entry.get()=='' or self.s3_entry.get()==''):
+			elif(self.m1_entry.get()=='' or self.m2_entry.get()=='' or self.m3_entry.get()=='' or 
+				self.s1_entry.get()=='' or self.s2_entry.get()=='' or self.s3_entry.get()==''):
 				messagebox.showwarning("", Setting_Language["Timer Empty"][language])
+			elif((self.voltage1_entry.get().isnumeric())==0 or (self.voltage2_entry.get().isnumeric())==0 or (self.voltage3_entry.get().isnumeric())==0):
+				messagebox.showwarning("", Setting_Language["Voltage Overflow Value"][language])
+			elif((self.m1_entry.get().isnumeric())==0 or (self.m2_entry.get().isnumeric())==0 or (self.m3_entry.get().isnumeric())==0):
+				messagebox.showwarning("", Setting_Language["Minute Overflow Value"][language])
+			elif((self.s1_entry.get().isnumeric())==0 or (self.s2_entry.get().isnumeric())==0 or (self.s3_entry.get().isnumeric())==0):
+				messagebox.showwarning("", Setting_Language["Second Overflow Value"][language])
+			elif(int(self.voltage1_entry.get()) < VOLTAGE_MIN_VALUE or int(self.voltage1_entry.get()) > VOLTAGE_MAX_VALUE):
+				messagebox.showwarning("", Setting_Language["Voltage Overflow Value"][language])
+			elif(int(self.voltage2_entry.get()) < VOLTAGE_MIN_VALUE or int(self.voltage2_entry.get()) > VOLTAGE_MAX_VALUE):
+				messagebox.showwarning("", Setting_Language["Voltage Overflow Value"][language])
+			elif(int(self.voltage3_entry.get()) < VOLTAGE_MIN_VALUE or int(self.voltage3_entry.get()) > VOLTAGE_MAX_VALUE):
+				messagebox.showwarning("", Setting_Language["Voltage Overflow Value"][language])
+			elif(int(self.m1_entry.get()) < MINUTE_MIN_VALUE or int(self.m1_entry.get()) > MINUTE_MAX_VALUE):
+				messagebox.showwarning("", Setting_Language["Minute Overflow Value"][language])
+			elif(int(self.m2_entry.get()) < MINUTE_MIN_VALUE or int(self.m2_entry.get()) > MINUTE_MAX_VALUE):
+				messagebox.showwarning("", Setting_Language["Minute Overflow Value"][language])
+			elif(int(self.m3_entry.get()) < MINUTE_MIN_VALUE or int(self.m3_entry.get()) > MINUTE_MAX_VALUE):
+				messagebox.showwarning("", Setting_Language["Minute Overflow Value"][language])
+			elif(int(self.s1_entry.get()) < SECOND_MIN_VALUE or int(self.s1_entry.get()) > SECOND_MAX_VALUE):
+				messagebox.showwarning("", Setting_Language["Second Overflow Value"][language])
+			elif(int(self.s2_entry.get()) < SECOND_MIN_VALUE or int(self.s2_entry.get()) > SECOND_MAX_VALUE):
+				messagebox.showwarning("", Setting_Language["Second Overflow Value"][language])
+			elif(int(self.s3_entry.get()) < SECOND_MIN_VALUE or int(self.s3_entry.get()) > SECOND_MAX_VALUE):
+				messagebox.showwarning("", Setting_Language["Second Overflow Value"][language])
+			elif((self.recipient_entry.get()=='' or self.recipient_entry.get()=='@gmail.com') and automail2_is_on):
+				messagebox.showwarning("", Setting_Language["Email Empty"][language])
 			else:
 				self.voltage1_set = self.voltage1_entry.get()
 				self.voltage2_set = self.voltage2_entry.get()
@@ -2930,9 +4320,13 @@ class SampleNaming_Screen(Frame):
 					self.wellname_list[i] = self.well_entry_list_34[i].get().strip()
 		
 		if(err == 0):
-			self.base_window.switch_page(self.base_window.multi_setting)
-			self.base_window.multi_setting.update_frame()
-
+			if(self.base_window.main_menu.stage_chosen == 1):
+				self.base_window.switch_page(self.base_window.multi_setting)
+				self.base_window.multi_setting.update_frame()
+			else: 
+				self.base_window.switch_page(self.base_window.single_setting)
+				self.base_window.single_setting.update_frame()
+			
 
 	def back_clicked(self):
 		self.base_window.switch_page(self.base_window.main_menu)
@@ -3201,26 +4595,30 @@ class MainMenu(Frame):
 		self.run_labelframe.columnconfigure(3, weight=1)
 		self.run_labelframe.columnconfigure(4, weight=1)
 		self.run_labelframe.rowconfigure(0, weight=1)
+		self.run_labelframe.rowconfigure(1, weight=1)
+		self.run_labelframe.rowconfigure(2, weight=1)
+		self.run_labelframe.rowconfigure(3, weight=1)
+		self.run_labelframe.rowconfigure(4, weight=1)
 
-		# self.singleStage_button = Button(self.run_labelframe,
-		# 							text = MainScreen_Language["SingleStage Button"][language],
-		# 							font = RUN_BUTTON_TXT_FONT,
-		# 							bg = RUN_BUTTON_BGD_COLOR,
-		# 							fg = RUN_BUTTON_TXT_COLOR,
-		# 							borderwidth = 0,
-		# 							command = self.singleStage_clicked)
-		# self.singleStage_button.grid(row=0, column=1, ipadx=50, ipady=35)
-		# self.singleStage_button.columnconfigure(0, weight=1)
-		# self.singleStage_button.rowconfigure(0, weight=1)
+		self.singleStage_button = Button(self.run_labelframe,
+									text = MainScreen_Language["SingleStage Button"][language],
+									font = RUN_BUTTON_TXT_FONT,
+									bg = RUN_BUTTON_BGD_COLOR,
+									fg = RUN_BUTTON_TXT_COLOR,
+									borderwidth = 0,
+									command = self.singleStage_clicked)
+		self.singleStage_button.grid(row=2, column=1, padx=10, pady=10, sticky="nsew")
+		self.singleStage_button.columnconfigure(0, weight=1)
+		self.singleStage_button.rowconfigure(0, weight=1)
 
 		self.multiStage_button = Button(self.run_labelframe,
-									text = MainScreen_Language["Electrophoresis Button"][language],
+									text = MainScreen_Language["MultiStage Button"][language],
 									font = RUN_BUTTON_TXT_FONT,
 									bg = RUN_BUTTON_BGD_COLOR,
 									fg = RUN_BUTTON_TXT_COLOR,
 									borderwidth = 0,
 									command = self.multiStage_clicked)
-		self.multiStage_button.grid(row=0, column=2, ipadx=50, ipady=35)
+		self.multiStage_button.grid(row=2, column=3, padx=10, pady=10, sticky="nsew")
 		self.multiStage_button.columnconfigure(0, weight=1)
 		self.multiStage_button.rowconfigure(0, weight=1)
 		############################## RUN GUI #################################
@@ -3949,11 +5347,15 @@ class MainWindow(Tk):
 		self.main_menu = MainMenu(self)
 		self.sample_naming = SampleNaming_Screen(self)
 		self.multi_setting = MultiSetting_Screen(self)
+		self.single_setting = SingleSetting_Screen(self)
+		self.single_run = SingleRun_Screen(self)
 		self.multi_run = MultiRun_Screen(self)
 
 		self.frame_list.append(self.main_menu)
 		self.frame_list.append(self.sample_naming)
 		self.frame_list.append(self.multi_setting)
+		self.frame_list.append(self.single_setting)
+		self.frame_list.append(self.single_run)
 		self.frame_list.append(self.multi_run)
 
 		self.switch_page(self.main_menu)
@@ -3968,18 +5370,26 @@ class MainWindow(Tk):
 	def reset(self):
 		self.frame_list.remove(self.sample_naming)
 		self.frame_list.remove(self.multi_setting)
+		self.frame_list.remove(self.single_setting)
+		self.frame_list.remove(self.single_run)
 		self.frame_list.remove(self.multi_run)
 
 		del self.sample_naming
 		del self.multi_setting
+		del self.single_setting
+		del self.single_run
 		del self.multi_run
 
 		self.sample_naming = SampleNaming_Screen(self)
 		self.multi_setting = MultiSetting_Screen(self)
+		self.single_setting = SingleSetting_Screen(self)
+		self.single_run = SingleRun_Screen(self)
 		self.multi_run = MultiRun_Screen(self)
 
 		self.frame_list.append(self.sample_naming)
 		self.frame_list.append(self.multi_setting)
+		self.frame_list.append(self.single_setting)
+		self.frame_list.append(self.single_run)
 		self.frame_list.append(self.multi_run)
 		
 		
