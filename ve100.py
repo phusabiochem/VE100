@@ -197,8 +197,8 @@ MainScreen_Language = {
 	"Open Button": ["Open", "Mở"],
 	"Save Button": ["Save", "Lưu"],
 	"Check Button": ["Check", "Kiểm tra"],
-	"FirstBand Label": ["First band", "Band đầu tiên"],
-	"LastBand Label": ["Last band", "Band cuối cùng"],
+	"FirstBand Label": ["First band", "Band trên cùng"],
+	"LastBand Label": ["Last band", "Band dưới cùng"],
 	"BandSize Label": ["Result band", "Band kết quả"],
 
 	"AccountInactive Label": ["LOGIN", "ĐĂNG NHẬP"],
@@ -213,7 +213,7 @@ MainScreen_Language = {
 	"SingleStageFolder LabelFrame": ["[Single Stage]", "[Đơn bước]"],
 	"MultiStageFolder LabelFrame": ["[Multi Stage]", "[Đa bước]"],
 	"FolderName Label": ["Folder name", "Tên thư mục"],
-	"Next Button": ["Next", "Kế tiếp"],
+	"Next Button": ["Next", "Tiếp theo"],
 	"Cancel Button": ["Cancel", "Hủy"],
 	"Electrophoresis Button": ["Electrophoresis", "Điện di"],
 
@@ -240,11 +240,11 @@ MainScreen_Language = {
 
 SampleNamingScreen_Language = {
 	"Setting Label": ["SETTING", "CÀI ĐẶT"],
-	"Next Button": ["Next", "Kế tiếp"],
+	"Next Button": ["Next", "Tiếp theo"],
 	"Back Button": ["Back", "Trở lại"],
 	"NumberOfWells Label": ["Number of wells", "Số lượng giếng"],
 	"WellNumber Label": ["No.", "Stt"],
-	"WellName Label": ["Well Name", "Tên giếng"],
+	"WellName Label": ["Sample Names", "Tên mẫu"],
 	##### Messagebox #####
 
 	"WellName Error": ["Well name must be less than 12 characters.\n[Well ", "Tên giếng phải ít hơn 12 ký tự. \n[Giếng "]
@@ -254,7 +254,7 @@ Setting_Language = {
 	"Setting Label": ["SETTING", "CÀI ĐẶT"],
 	"Back Button": ["Back", "Trở lại"],
 	"Run Button": ["Run", "Chạy"],
-	"Stage LabelFrame": ["Stage", "Giai đoạn"],
+	"Stage LabelFrame": ["Stage", "Bước"],
 	"VoltageSetting LabelFrame": ["Voltage (DC)", "Điện áp (DC)"],
 	"TimerSetting LabelFrame": ["Timer (min : sec)", "Thời gian (phút : giây)"],
 	"AutoCaptureSetting LabelFrame": ["Auto-Capture Timer (min)", "Thời gian chụp tự động (phút)"],
@@ -280,7 +280,7 @@ Setting_Language = {
 
 Run_Language = {
 	"Run Label": ["ELECTROPHORESIS", "ĐIỆN DI"],
-	"Stage LabelFrame": ["STAGE", "Giai đoạn"],
+	"Stage LabelFrame": ["STAGE", "Bước"],
 	"TimeLeft LabelFrame": ["Time left", "Thời gian còn lại"],
 	"VoltageSense Label": ["Voltage:", "Điện áp:"],
 	"CurrentSense Label": ["Current:", "Dòng điện:"],
@@ -787,15 +787,15 @@ class ScrollableFrame(Frame):
 	def __init__(self, container, *args, **kwargs):
 		super().__init__(container, *args, **kwargs)
 		# canvas = Canvas(self, bg = 'white', height=400, width=996)
-		canvas = Canvas(self, bg = 'white')
-		scrollbar = ttk.Scrollbar(self, orient="vertical", command=canvas.yview)
-		self.scrollable_frame = Frame(canvas, bg = 'white')
+		self.canvas = Canvas(self, bg = 'white')
+		scrollbar = ttk.Scrollbar(self, orient="vertical", command=self.canvas.yview)
+		self.scrollable_frame = Frame(self.canvas, bg = 'white')
 		self.scrollable_frame.columnconfigure(1, weight=1)
 
 		self.scrollable_frame.bind(
 			"<Configure>",
-			lambda e: canvas.configure(
-				scrollregion=canvas.bbox("all")
+			lambda e: self.canvas.configure(
+				scrollregion=self.canvas.bbox("all")
 			)
 		)
 		self.rowconfigure(0, weight=1)
@@ -803,18 +803,18 @@ class ScrollableFrame(Frame):
 		self.grid_propagate(False)
 
 		# canvas.create_window((0, 0), window=self.scrollable_frame)
-		canvas.create_window((0, 0), window=self.scrollable_frame, anchor="nw", tags="frame")
-		canvas.configure(yscrollcommand=scrollbar.set)
-		canvas.grid(row=0, column=0, sticky="nsew")
-		canvas.rowconfigure(0, weight=1)
-		canvas.columnconfigure(0, weight=1)
+		self.canvas.create_window((0, 0), window=self.scrollable_frame, anchor="nw", tags="frame")
+		self.canvas.configure(yscrollcommand=scrollbar.set)
+		self.canvas.grid(row=0, column=0, sticky="nsew")
+		self.canvas.rowconfigure(0, weight=1)
+		self.canvas.columnconfigure(0, weight=1)
 		scrollbar.grid(row=0, column=1, sticky="nsew")
-		canvas.yview_moveto(0)
+		self.canvas.yview_moveto(0)
 
 		def _on_canvas_configure(event):
-			canvas.itemconfig("frame", width=event.width)
+			self.canvas.itemconfig("frame", width=event.width)
 
-		canvas.bind("<Configure>", _on_canvas_configure)
+		self.canvas.bind("<Configure>", _on_canvas_configure)
 
 class SingleRun_Screen(Frame):
 	def __init__(self, master):
@@ -4069,26 +4069,10 @@ class SampleNaming_Screen(Frame):
 									width=50,
 									font = WELLTABLE_LABEL_TXT_FONT)
 			self.well_entry_list_18[i].grid(row=i+1, column=1, sticky='nsew', padx=1, pady=1)
+			self.well_entry_list_18[i].bind("<Return>", lambda e, idx=i: self.focus_next_entry(idx, self.well_entry_list_18))
 
 		self.well_entry_list_18[0].focus_set()
-		self.well_entry_list_18[0].bind("<Return>",lambda funct:self.well_entry_list_18[1].focus_set())
-		self.well_entry_list_18[1].bind("<Return>",lambda funct:self.well_entry_list_18[2].focus_set())
-		self.well_entry_list_18[2].bind("<Return>",lambda funct:self.well_entry_list_18[3].focus_set())
-		self.well_entry_list_18[3].bind("<Return>",lambda funct:self.well_entry_list_18[4].focus_set())
-		self.well_entry_list_18[4].bind("<Return>",lambda funct:self.well_entry_list_18[5].focus_set())
-		self.well_entry_list_18[5].bind("<Return>",lambda funct:self.well_entry_list_18[6].focus_set())
-		self.well_entry_list_18[6].bind("<Return>",lambda funct:self.well_entry_list_18[7].focus_set())
-		self.well_entry_list_18[7].bind("<Return>",lambda funct:self.well_entry_list_18[8].focus_set())
-		self.well_entry_list_18[8].bind("<Return>",lambda funct:self.well_entry_list_18[9].focus_set())
-		self.well_entry_list_18[9].bind("<Return>",lambda funct:self.well_entry_list_18[10].focus_set())
-		self.well_entry_list_18[10].bind("<Return>",lambda funct:self.well_entry_list_18[11].focus_set())
-		self.well_entry_list_18[11].bind("<Return>",lambda funct:self.well_entry_list_18[12].focus_set())
-		self.well_entry_list_18[12].bind("<Return>",lambda funct:self.well_entry_list_18[13].focus_set())
-		self.well_entry_list_18[13].bind("<Return>",lambda funct:self.well_entry_list_18[14].focus_set())
-		self.well_entry_list_18[14].bind("<Return>",lambda funct:self.well_entry_list_18[15].focus_set())
-		self.well_entry_list_18[15].bind("<Return>",lambda funct:self.well_entry_list_18[16].focus_set())
-		self.well_entry_list_18[16].bind("<Return>",lambda funct:self.well_entry_list_18[17].focus_set())
-		self.well_entry_list_18[17].bind("<Return>",lambda funct:self.well_entry_list_18[0].focus_set())
+
 
 	def frame_create_26wells(self):
 		try: 
@@ -4151,33 +4135,9 @@ class SampleNaming_Screen(Frame):
 									font = WELLTABLE_LABEL_TXT_FONT)
 			self.well_entry_list_26[i].grid(row=i+1, column=1, sticky='nsew', padx=1, pady=1)
 
+			self.well_entry_list_26[i].bind("<Return>", lambda e, idx=i: self.focus_next_entry(idx, self.well_entry_list_26))
+		
 		self.well_entry_list_26[0].focus_set()
-		self.well_entry_list_26[0].bind("<Return>",lambda funct:self.well_entry_list_26[1].focus_set())
-		self.well_entry_list_26[1].bind("<Return>",lambda funct:self.well_entry_list_26[2].focus_set())
-		self.well_entry_list_26[2].bind("<Return>",lambda funct:self.well_entry_list_26[3].focus_set())
-		self.well_entry_list_26[3].bind("<Return>",lambda funct:self.well_entry_list_26[4].focus_set())
-		self.well_entry_list_26[4].bind("<Return>",lambda funct:self.well_entry_list_26[5].focus_set())
-		self.well_entry_list_26[5].bind("<Return>",lambda funct:self.well_entry_list_26[6].focus_set())
-		self.well_entry_list_26[6].bind("<Return>",lambda funct:self.well_entry_list_26[7].focus_set())
-		self.well_entry_list_26[7].bind("<Return>",lambda funct:self.well_entry_list_26[8].focus_set())
-		self.well_entry_list_26[8].bind("<Return>",lambda funct:self.well_entry_list_26[9].focus_set())
-		self.well_entry_list_26[9].bind("<Return>",lambda funct:self.well_entry_list_26[10].focus_set())
-		self.well_entry_list_26[10].bind("<Return>",lambda funct:self.well_entry_list_26[11].focus_set())
-		self.well_entry_list_26[11].bind("<Return>",lambda funct:self.well_entry_list_26[12].focus_set())
-		self.well_entry_list_26[12].bind("<Return>",lambda funct:self.well_entry_list_26[13].focus_set())
-		self.well_entry_list_26[13].bind("<Return>",lambda funct:self.well_entry_list_26[14].focus_set())
-		self.well_entry_list_26[14].bind("<Return>",lambda funct:self.well_entry_list_26[15].focus_set())
-		self.well_entry_list_26[15].bind("<Return>",lambda funct:self.well_entry_list_26[16].focus_set())
-		self.well_entry_list_26[16].bind("<Return>",lambda funct:self.well_entry_list_26[17].focus_set())
-		self.well_entry_list_26[17].bind("<Return>",lambda funct:self.well_entry_list_26[18].focus_set())
-		self.well_entry_list_26[18].bind("<Return>",lambda funct:self.well_entry_list_26[19].focus_set())
-		self.well_entry_list_26[19].bind("<Return>",lambda funct:self.well_entry_list_26[20].focus_set())
-		self.well_entry_list_26[20].bind("<Return>",lambda funct:self.well_entry_list_26[21].focus_set())
-		self.well_entry_list_26[21].bind("<Return>",lambda funct:self.well_entry_list_26[22].focus_set())
-		self.well_entry_list_26[22].bind("<Return>",lambda funct:self.well_entry_list_26[23].focus_set())
-		self.well_entry_list_26[23].bind("<Return>",lambda funct:self.well_entry_list_26[24].focus_set())
-		self.well_entry_list_26[24].bind("<Return>",lambda funct:self.well_entry_list_26[25].focus_set())
-		self.well_entry_list_26[25].bind("<Return>",lambda funct:self.well_entry_list_26[0].focus_set())
 
 	def frame_create_34wells(self):
 		try: 
@@ -4240,41 +4200,32 @@ class SampleNaming_Screen(Frame):
 									font = WELLTABLE_LABEL_TXT_FONT)
 			self.well_entry_list_34[i].grid(row=i+1, column=1, sticky='nsew', padx=1, pady=1)
 
+			self.well_entry_list_34[i].bind("<Return>", lambda e, idx=i: self.focus_next_entry(idx, self.well_entry_list_34))
+
 		self.well_entry_list_34[0].focus_set()
-		self.well_entry_list_34[0].bind("<Return>",lambda funct:self.well_entry_list_34[1].focus_set())
-		self.well_entry_list_34[1].bind("<Return>",lambda funct:self.well_entry_list_34[2].focus_set())
-		self.well_entry_list_34[2].bind("<Return>",lambda funct:self.well_entry_list_34[3].focus_set())
-		self.well_entry_list_34[3].bind("<Return>",lambda funct:self.well_entry_list_34[4].focus_set())
-		self.well_entry_list_34[4].bind("<Return>",lambda funct:self.well_entry_list_34[5].focus_set())
-		self.well_entry_list_34[5].bind("<Return>",lambda funct:self.well_entry_list_34[6].focus_set())
-		self.well_entry_list_34[6].bind("<Return>",lambda funct:self.well_entry_list_34[7].focus_set())
-		self.well_entry_list_34[7].bind("<Return>",lambda funct:self.well_entry_list_34[8].focus_set())
-		self.well_entry_list_34[8].bind("<Return>",lambda funct:self.well_entry_list_34[9].focus_set())
-		self.well_entry_list_34[9].bind("<Return>",lambda funct:self.well_entry_list_34[10].focus_set())
-		self.well_entry_list_34[10].bind("<Return>",lambda funct:self.well_entry_list_34[11].focus_set())
-		self.well_entry_list_34[11].bind("<Return>",lambda funct:self.well_entry_list_34[12].focus_set())
-		self.well_entry_list_34[12].bind("<Return>",lambda funct:self.well_entry_list_34[13].focus_set())
-		self.well_entry_list_34[13].bind("<Return>",lambda funct:self.well_entry_list_34[14].focus_set())
-		self.well_entry_list_34[14].bind("<Return>",lambda funct:self.well_entry_list_34[15].focus_set())
-		self.well_entry_list_34[15].bind("<Return>",lambda funct:self.well_entry_list_34[16].focus_set())
-		self.well_entry_list_34[16].bind("<Return>",lambda funct:self.well_entry_list_34[17].focus_set())
-		self.well_entry_list_34[17].bind("<Return>",lambda funct:self.well_entry_list_34[18].focus_set())
-		self.well_entry_list_34[18].bind("<Return>",lambda funct:self.well_entry_list_34[19].focus_set())
-		self.well_entry_list_34[19].bind("<Return>",lambda funct:self.well_entry_list_34[20].focus_set())
-		self.well_entry_list_34[20].bind("<Return>",lambda funct:self.well_entry_list_34[21].focus_set())
-		self.well_entry_list_34[21].bind("<Return>",lambda funct:self.well_entry_list_34[22].focus_set())
-		self.well_entry_list_34[22].bind("<Return>",lambda funct:self.well_entry_list_34[23].focus_set())
-		self.well_entry_list_34[23].bind("<Return>",lambda funct:self.well_entry_list_34[24].focus_set())
-		self.well_entry_list_34[24].bind("<Return>",lambda funct:self.well_entry_list_34[25].focus_set())
-		self.well_entry_list_34[25].bind("<Return>",lambda funct:self.well_entry_list_34[26].focus_set())
-		self.well_entry_list_34[26].bind("<Return>",lambda funct:self.well_entry_list_34[27].focus_set())
-		self.well_entry_list_34[27].bind("<Return>",lambda funct:self.well_entry_list_34[28].focus_set())
-		self.well_entry_list_34[28].bind("<Return>",lambda funct:self.well_entry_list_34[29].focus_set())
-		self.well_entry_list_34[29].bind("<Return>",lambda funct:self.well_entry_list_34[30].focus_set())
-		self.well_entry_list_34[30].bind("<Return>",lambda funct:self.well_entry_list_34[31].focus_set())
-		self.well_entry_list_34[31].bind("<Return>",lambda funct:self.well_entry_list_34[32].focus_set())
-		self.well_entry_list_34[32].bind("<Return>",lambda funct:self.well_entry_list_34[33].focus_set())
-		self.well_entry_list_34[33].bind("<Return>",lambda funct:self.well_entry_list_34[0].focus_set())
+
+	def focus_next_entry(self, index, entry):
+		if index + 1 < len(entry):
+			next_entry = entry[index + 1]
+			next_entry.focus_set()
+			self.scroll_to_widget(next_entry)
+
+	def scroll_to_widget(self, widget):
+		self.update_idletasks()  # đảm bảo vị trí đã được tính toán
+
+		widget_y = widget.winfo_y()
+		if(self.numberofwells_combobox.current() == 0):
+			frame_height = self.wells_18_scrollableframe.winfo_height()
+			scroll_fraction = widget_y / (2.8*frame_height) 
+			self.wells_18_scrollableframe.canvas.yview_moveto(scroll_fraction)
+		elif(self.numberofwells_combobox.current() == 1):
+			frame_height = self.wells_26_scrollableframe.winfo_height()
+			scroll_fraction = widget_y / (2.8*frame_height) 
+			self.wells_26_scrollableframe.canvas.yview_moveto(scroll_fraction)
+		else:
+			frame_height = self.wells_34_scrollableframe.winfo_height()
+			scroll_fraction = widget_y / (2.8*frame_height) 
+			self.wells_34_scrollableframe.canvas.yview_moveto(scroll_fraction)
 
 	def numberofwell_select(self, eventObject):
 		if(self.numberofwells_combobox.current() == 0):
