@@ -85,8 +85,8 @@ SENSOR_PIN = 20
 ############################ GUI DEFINE ###############################
 BANDFINDER_CONTROL_BGD_COLOR = "grey30"
 APP_BGD_COLOR = "white smoke"
-MAIN_TITLE_BGD_COLOR = "#011e24"
-MAIN_TITLE_TXT_COLOR = "#00eaff"
+MAIN_TITLE_BGD_COLOR = "#25c3c6"
+MAIN_TITLE_TXT_COLOR = "#ffffff"
 MAIN_TITLE_TXT_FONT = ('Arial', 17, 'bold')
 MAIN_MENU_BUTTON_BGD_COLOR = "grey50"
 MAIN_MENU_BUTTON_TXT_COLOR = "black"
@@ -97,10 +97,10 @@ EXIT_BUTTON_BGD_COLOR = "#FF4B4B"
 MAIN_MENU_LABELFRAME_BGD_COLOR = "grey85"
 MAIN_MENU_LABELFRAME_TXT_COLOR = "black"
 MAIN_MENU_LABELFRAME_TXT_FONT = ('Arial', 11, 'bold')
-MAIN_MENU_LABELFRAME_BORDER_COLOR = "#00eaff"
-RUN_BUTTON_BGD_COLOR = "#011e24"
-RUN_BUTTON_TXT_COLOR = "#00eaff"
-RUN_BUTTON_TXT_FONT = ('Arial', 12, 'bold')
+MAIN_MENU_LABELFRAME_BORDER_COLOR = "#ffffff"
+RUN_BUTTON_BGD_COLOR = "#25c3c6"
+RUN_BUTTON_TXT_COLOR = "#ffffff"
+RUN_BUTTON_TXT_FONT = ('Arial', 14, 'bold')
 BANDFINDER_FRAME_BGD_COLOR = "grey85"
 BANDFINDER_BUTTON_BGD_COLOR = "grey80"
 BANDFINDER_BUTTON_TXT_COLOR = "black"
@@ -116,10 +116,10 @@ LOGIN_LABEL_TXT_FONT = ('Arial', 12, 'bold')
 USERPASS_LABEL_BGD_COLOR = "grey85"
 USERPASS_LABEL_TXT_COLOR = "black"
 USERPASS_LABEL_TXT_FONT = ('Arial', 13)
-LOGIN_BUTTON_BGD_COLOR = "#011e24"
+LOGIN_BUTTON_BGD_COLOR = "#25c3c6"
 LOGIN_BUTTON_TXT_COLOR = "white"
 LOGIN_BUTTON_TXT_FONT = ('Arial', 12, 'bold')
-LANGUAGE_SAVE_BUTTON_BGD_COLOR = "#011e24"
+LANGUAGE_SAVE_BUTTON_BGD_COLOR = "#25c3c6"
 LANGUAGE_SAVE_BUTTON_TXT_COLOR = "white"
 LANGUAGE_SAVE_BUTTON_TXT_FONT = ('Arial', 12, 'bold')
 LANGUAGE_COMBOBOX_TXT_FONT = ('Arial', 13)
@@ -128,26 +128,27 @@ FOLDERNAMING_FRAME_BGD_COLOR = 'grey70'
 FOLDERNAMING_FRAME_TXT_COLOR = 'black'
 FOLDERNAME_LABEL_TXT_COLOR = 'black' 
 FOLDERNAME_LABEL_TXT_FONT= ('Arial', 15, 'bold')
-FOLDERNAME_BUTTON_BGD_COLOR = "#011e24"
+FOLDERNAME_BUTTON_BGD_COLOR = "#25c3c6"
 FOLDERNAME_BUTTON_TXT_COLOR = 'white'
 FOLDERNAME_BUTTON_TXT_FONT = ('Arial', 12, 'bold')
 
 BUTTON_FRAME_BGD_COLOR = "grey75"
-SWITCHPAGE_BUTTON_BGD_COLOR = "#011e24"
+SWITCHPAGE_BUTTON_BGD_COLOR = "#25c3c6"
 SWITCHPAGE_BUTTON_TXT_COLOR = "white"
 SWITCHPAGE_BUTTON_TXT_FONT = ('Arial', 12, 'bold')
 
 NUMBEROFWELLS_LABEL_TXT_COLOR = 'black'
 NUMBEROFWELLS_LABEL_TXT_FONT = ('Arial', 12)
 NUMBEROFWELLS_COMBOBOX_TXT_FONT = ('Arial', 12)
-WELLTABLE_LABEL_BGD_COLOR = "#011e24"
+WELLTABLE_LABEL_BGD_COLOR = "#0f787a"
 WELLTABLE_LABEL_TXT_COLOR = "white"
 WELLTABLE_LABEL_TXT_FONT = ('Arial', 12)
 
-SETTINGPARA_LABELFRAME_BGD_COLOR = 'white'
+SETTINGPARA_LABELFRAME_BGD_COLOR = '#0f787a'
 SETTINGPARA_LABELFRAME_TXT_COLOR = 'white'
 SETTINGPARA_LABELFRAME_TXT_FONT = ('Arial', 12)
-SETTINGPARA_ENTRY_TXT_COLOR = "#fd0558"
+SETTINGPARA_ENTRY_BGD_COLOR = 'white' 
+SETTINGPARA_ENTRY_TXT_COLOR = "#FF4B4B"
 SETTINGPARA_ENTRY_TXT_FONT = ('Arial', 25, 'bold')
 
 AUTOMAIL_LABEL_TXT_FONT = ('Arial', 12)
@@ -158,24 +159,24 @@ AUTOMAILOFF_BUTTON_BGD_COLOR =  "#FF4B4B"
 AUTOMAIL_BUTTON_BGD_COLOR = "grey80"
 
 RUNSTAGE_LABELFRAME_INACTIVE_BGD_COLOR = "grey80"
-RUNSTAGE_LABELFRAME_ACTIVE_BGD_COLOR =  "#91ff00"
-RUNSTAGE_LABELFRAME_TXT_COLOR = "#011e24"
+RUNSTAGE_LABELFRAME_ACTIVE_BGD_COLOR =  "#9bf42e"
+RUNSTAGE_LABELFRAME_TXT_COLOR = "#0f787a"
 RUNSTAGE_LABELFRAME_TXT_FONT = ('Arial', 12, 'bold')
 TIMELEFT_LABELFRAME_TXT_FONT = ('Arial', 10)
 
-STAGE_CONTENT_TXT_COLOR = "#0075FC"
+STAGE_CONTENT_TXT_COLOR = "#FF4B4B"
 STAGE_CONTENT_TXT_FONT = ('Arial', 15)
 
 SENSE_LABEL_TXT_FONT =  ('Arial', 13)
 SENSEVALUE_LABEL_BGD_COLOR = "grey25"
 SENSEVALUE_LABEL_TXT_FONT = ('Arial', 15)
-SENSEVALUE_LABEL_TXT_COLOR = "#0075FC"
+SENSEVALUE_LABEL_TXT_COLOR = "#FF4B4B"
 
-CAPTURE_BUTTON_BGD_COLOR = "#011e24"
+CAPTURE_BUTTON_BGD_COLOR = "#00b2e9"
 CAPTURE_BUTTON_TXT_COLOR = "white"
 STOP_BUTTON_BGD_COLOR =  "#FF4B4B"
 STOP_BUTTON_TXT_COLOR = "black"
-CAMMODE_BUTTON_ACTIVE_BGD_COLOR = "#00eaff"
+CAMMODE_BUTTON_ACTIVE_BGD_COLOR = "#ffffff"
 CAMMODE_BUTTON_INACTIVE_BGD_COLOR = "grey65"
 CAMMODE_BUTTON_TXT_COLOR = "black"
 CAMMODE_BUTTON_TXT_FONT = ('Arial', 11)
@@ -3097,7 +3098,7 @@ class SingleSetting_Screen(Frame):
 		self.stage1_labelframe.pack_propagate(0)
 
 		self.stage1_labelframe_1= LabelFrame(self.stage1_labelframe, 
-										bg = MAIN_TITLE_BGD_COLOR,
+										bg = SETTINGPARA_LABELFRAME_BGD_COLOR,
 										fg = SETTINGPARA_LABELFRAME_TXT_COLOR,
 										text = Setting_Language["VoltageSetting LabelFrame"][language],
 										highlightbackground = MAIN_MENU_LABELFRAME_BORDER_COLOR,
@@ -3108,7 +3109,7 @@ class SingleSetting_Screen(Frame):
 		self.stage1_labelframe_1.pack_propagate(0)
 
 		self.stage1_labelframe_2= LabelFrame(self.stage1_labelframe, 
-										bg = MAIN_TITLE_BGD_COLOR,
+										bg = SETTINGPARA_LABELFRAME_BGD_COLOR,
 										fg = SETTINGPARA_LABELFRAME_TXT_COLOR,
 										text = Setting_Language["TimerSetting LabelFrame"][language],
 										highlightbackground = MAIN_MENU_LABELFRAME_BORDER_COLOR,
@@ -3121,7 +3122,7 @@ class SingleSetting_Screen(Frame):
 		self.stage1_labelframe_2.pack_propagate(0)
 
 		self.stage1_labelframe_3= LabelFrame(self.stage1_labelframe, 
-										bg = MAIN_TITLE_BGD_COLOR,
+										bg = SETTINGPARA_LABELFRAME_BGD_COLOR,
 										fg = SETTINGPARA_LABELFRAME_TXT_COLOR,
 										text = Setting_Language["AutoCaptureSetting LabelFrame"][language],
 										highlightbackground = MAIN_MENU_LABELFRAME_BORDER_COLOR,
@@ -3137,7 +3138,7 @@ class SingleSetting_Screen(Frame):
 							fg = SETTINGPARA_ENTRY_TXT_COLOR, 
 							font = SETTINGPARA_ENTRY_TXT_FONT,
 							justify = 'center',
-							bg = SETTINGPARA_LABELFRAME_BGD_COLOR,
+							# bg = SETTINGPARA_ENTRY_BGD_COLOR,
 							width = 3)
 		self.voltage1_entry.grid(row=0, column=0, sticky='nsew')
 		self.voltage1_entry.insert(0, voltage_set)
@@ -3146,7 +3147,7 @@ class SingleSetting_Screen(Frame):
 		self.m1_entry = Entry(self.stage1_labelframe_2, 
 						fg = SETTINGPARA_ENTRY_TXT_COLOR, 
 						font = SETTINGPARA_ENTRY_TXT_FONT,
-						bg = SETTINGPARA_LABELFRAME_BGD_COLOR,
+						# bg = SETTINGPARA_ENTRY_BGD_COLOR,
 						justify = 'center',
 						width = 3)
 		self.m1_entry.grid(row=0, column=0, sticky='nsew')
@@ -3154,7 +3155,7 @@ class SingleSetting_Screen(Frame):
 
 		self.twodot_label_1 = Label(self.stage1_labelframe_2, 
 							fg = SETTINGPARA_ENTRY_TXT_COLOR, 
-							bg = SETTINGPARA_LABELFRAME_BGD_COLOR, 
+							bg = SETTINGPARA_ENTRY_BGD_COLOR, 
 							font = SETTINGPARA_ENTRY_TXT_FONT,
 							text =':')
 		self.twodot_label_1.grid(row=0, column=1, sticky='nsew')
@@ -3162,7 +3163,7 @@ class SingleSetting_Screen(Frame):
 		self.s1_entry = Entry(self.stage1_labelframe_2, 
 						fg = SETTINGPARA_ENTRY_TXT_COLOR, 
 						font = SETTINGPARA_ENTRY_TXT_FONT,
-						bg = SETTINGPARA_LABELFRAME_BGD_COLOR,
+						# bg = SETTINGPARA_ENTRY_BGD_COLOR,
 						justify = 'center',
 						width = 3)
 		self.s1_entry.grid(row=0, column=2, sticky='nsew')
@@ -3173,7 +3174,7 @@ class SingleSetting_Screen(Frame):
 							fg = SETTINGPARA_ENTRY_TXT_COLOR, 
 							font = SETTINGPARA_ENTRY_TXT_FONT,
 							justify = 'center',
-							bg = SETTINGPARA_LABELFRAME_BGD_COLOR,
+							# bg = SETTINGPARA_ENTRY_BGD_COLOR,
 							width = 3)
 		self.autocap_entry.grid(row=0, column=0, sticky='nsew')
 		self.autocap_entry.insert(0, auto_capture_timer_set)
@@ -3181,7 +3182,7 @@ class SingleSetting_Screen(Frame):
 
 		# In work_frame_2
 		self.automail_labelframe = LabelFrame(self.work_frame_2, 
-										bg = MAIN_TITLE_BGD_COLOR, 
+										bg = SETTINGPARA_LABELFRAME_BGD_COLOR, 
 										fg = SETTINGPARA_LABELFRAME_TXT_COLOR, 
 										font = MAIN_MENU_LABELFRAME_TXT_FONT,
 										text = Setting_Language["AutoMail LabelFrame"][language])
@@ -3493,7 +3494,7 @@ class MultiSetting_Screen(Frame):
 		self.stage3_labelframe.pack_propagate(0)
 
 		self.stage1_labelframe_1= LabelFrame(self.stage1_labelframe, 
-										bg = MAIN_TITLE_BGD_COLOR,
+										bg = SETTINGPARA_LABELFRAME_BGD_COLOR,
 										fg = SETTINGPARA_LABELFRAME_TXT_COLOR,
 										text = Setting_Language["VoltageSetting LabelFrame"][language],
 										highlightbackground = MAIN_MENU_LABELFRAME_BORDER_COLOR,
@@ -3504,7 +3505,7 @@ class MultiSetting_Screen(Frame):
 		self.stage1_labelframe_1.pack_propagate(0)
 
 		self.stage1_labelframe_2= LabelFrame(self.stage1_labelframe, 
-										bg = MAIN_TITLE_BGD_COLOR,
+										bg = SETTINGPARA_LABELFRAME_BGD_COLOR,
 										fg = SETTINGPARA_LABELFRAME_TXT_COLOR,
 										text = Setting_Language["TimerSetting LabelFrame"][language],
 										highlightbackground = MAIN_MENU_LABELFRAME_BORDER_COLOR,
@@ -3517,7 +3518,7 @@ class MultiSetting_Screen(Frame):
 		self.stage1_labelframe_2.pack_propagate(0)
 
 		self.stage2_labelframe_1= LabelFrame(self.stage2_labelframe, 
-										bg = MAIN_TITLE_BGD_COLOR,
+										bg = SETTINGPARA_LABELFRAME_BGD_COLOR,
 										fg = SETTINGPARA_LABELFRAME_TXT_COLOR,
 										text = Setting_Language["VoltageSetting LabelFrame"][language],
 										highlightbackground = MAIN_MENU_LABELFRAME_BORDER_COLOR,
@@ -3528,7 +3529,7 @@ class MultiSetting_Screen(Frame):
 		self.stage2_labelframe_1.pack_propagate(0)
 
 		self.stage2_labelframe_2= LabelFrame(self.stage2_labelframe, 
-										bg = MAIN_TITLE_BGD_COLOR,
+										bg = SETTINGPARA_LABELFRAME_BGD_COLOR,
 										fg = SETTINGPARA_LABELFRAME_TXT_COLOR,
 										text = Setting_Language["TimerSetting LabelFrame"][language],
 										highlightbackground = MAIN_MENU_LABELFRAME_BORDER_COLOR,
@@ -3541,7 +3542,7 @@ class MultiSetting_Screen(Frame):
 		self.stage2_labelframe_2.pack_propagate(0)
 
 		self.stage3_labelframe_1= LabelFrame(self.stage3_labelframe, 
-										bg = MAIN_TITLE_BGD_COLOR,
+										bg = SETTINGPARA_LABELFRAME_BGD_COLOR,
 										fg = SETTINGPARA_LABELFRAME_TXT_COLOR,
 										text = Setting_Language["VoltageSetting LabelFrame"][language],
 										highlightbackground = MAIN_MENU_LABELFRAME_BORDER_COLOR,
@@ -3552,7 +3553,7 @@ class MultiSetting_Screen(Frame):
 		self.stage3_labelframe_1.pack_propagate(0)
 		
 		self.stage3_labelframe_2= LabelFrame(self.stage3_labelframe, 
-										bg = MAIN_TITLE_BGD_COLOR,
+										bg = SETTINGPARA_LABELFRAME_BGD_COLOR,
 										fg = SETTINGPARA_LABELFRAME_TXT_COLOR,
 										text = Setting_Language["TimerSetting LabelFrame"][language],
 										highlightbackground = MAIN_MENU_LABELFRAME_BORDER_COLOR,
@@ -3569,7 +3570,7 @@ class MultiSetting_Screen(Frame):
 							fg = SETTINGPARA_ENTRY_TXT_COLOR, 
 							font = SETTINGPARA_ENTRY_TXT_FONT,
 							justify = 'center',
-							bg = SETTINGPARA_LABELFRAME_BGD_COLOR,
+							# bg = SETTINGPARA_LABELFRAME_BGD_COLOR,
 							width = 3)
 		self.voltage1_entry.grid(row=0, column=0, sticky='nsew')
 		self.voltage1_entry.insert(0, voltage1_set)
@@ -3577,7 +3578,7 @@ class MultiSetting_Screen(Frame):
 		self.m1_entry = Entry(self.stage1_labelframe_2, 
 						fg = SETTINGPARA_ENTRY_TXT_COLOR, 
 						font = SETTINGPARA_ENTRY_TXT_FONT,
-						bg = SETTINGPARA_LABELFRAME_BGD_COLOR,
+						# bg = SETTINGPARA_LABELFRAME_BGD_COLOR,
 						justify = 'center',
 						width = 3)
 		self.m1_entry.grid(row=0, column=0, sticky='nsew')
@@ -3585,7 +3586,7 @@ class MultiSetting_Screen(Frame):
 
 		self.twodot_label_1 = Label(self.stage1_labelframe_2, 
 							fg = SETTINGPARA_ENTRY_TXT_COLOR, 
-							bg = SETTINGPARA_LABELFRAME_BGD_COLOR, 
+							bg = SETTINGPARA_ENTRY_BGD_COLOR, 
 							font = SETTINGPARA_ENTRY_TXT_FONT,
 							text =':')
 		self.twodot_label_1.grid(row=0, column=1, sticky='nsew')
@@ -3593,7 +3594,7 @@ class MultiSetting_Screen(Frame):
 		self.s1_entry = Entry(self.stage1_labelframe_2, 
 						fg = SETTINGPARA_ENTRY_TXT_COLOR, 
 						font = SETTINGPARA_ENTRY_TXT_FONT,
-						bg = SETTINGPARA_LABELFRAME_BGD_COLOR,
+						# bg = SETTINGPARA_LABELFRAME_BGD_COLOR,
 						justify = 'center',
 						width = 3)
 		self.s1_entry.grid(row=0, column=2, sticky='nsew')
@@ -3604,7 +3605,7 @@ class MultiSetting_Screen(Frame):
 							fg = SETTINGPARA_ENTRY_TXT_COLOR, 
 							font = SETTINGPARA_ENTRY_TXT_FONT,
 							justify = 'center',
-							bg = SETTINGPARA_LABELFRAME_BGD_COLOR,
+							# bg = SETTINGPARA_LABELFRAME_BGD_COLOR,
 							width = 3)
 		self.voltage2_entry.grid(row=0, column=0, sticky='nsew')
 		self.voltage2_entry.insert(0, voltage2_set)
@@ -3612,7 +3613,7 @@ class MultiSetting_Screen(Frame):
 		self.m2_entry = Entry(self.stage2_labelframe_2, 
 						fg = SETTINGPARA_ENTRY_TXT_COLOR, 
 						font = SETTINGPARA_ENTRY_TXT_FONT,
-						bg = SETTINGPARA_LABELFRAME_BGD_COLOR,
+						# bg = SETTINGPARA_LABELFRAME_BGD_COLOR,
 						justify = 'center',
 						width = 3)
 		self.m2_entry.grid(row=0, column=0, sticky='nsew')
@@ -3620,7 +3621,7 @@ class MultiSetting_Screen(Frame):
 
 		self.twodot_label_2 = Label(self.stage2_labelframe_2, 
 							fg = SETTINGPARA_ENTRY_TXT_COLOR, 
-							bg = SETTINGPARA_LABELFRAME_BGD_COLOR, 
+							bg = SETTINGPARA_ENTRY_BGD_COLOR, 
 							font = SETTINGPARA_ENTRY_TXT_FONT,
 							text =':')
 		self.twodot_label_2.grid(row=0, column=1, sticky='nsew')
@@ -3628,7 +3629,7 @@ class MultiSetting_Screen(Frame):
 		self.s2_entry = Entry(self.stage2_labelframe_2, 
 						fg = SETTINGPARA_ENTRY_TXT_COLOR, 
 						font = SETTINGPARA_ENTRY_TXT_FONT,
-						bg = SETTINGPARA_LABELFRAME_BGD_COLOR,
+						# bg = SETTINGPARA_LABELFRAME_BGD_COLOR,
 						justify = 'center',
 						width = 3)
 		self.s2_entry.grid(row=0, column=2, sticky='nsew')
@@ -3639,7 +3640,7 @@ class MultiSetting_Screen(Frame):
 							fg = SETTINGPARA_ENTRY_TXT_COLOR, 
 							font = SETTINGPARA_ENTRY_TXT_FONT,
 							justify = 'center',
-							bg = SETTINGPARA_LABELFRAME_BGD_COLOR,
+							# bg = SETTINGPARA_LABELFRAME_BGD_COLOR,
 							width = 3)
 		self.voltage3_entry.grid(row=0, column=0, sticky='nsew')
 		self.voltage3_entry.insert(0, voltage3_set)
@@ -3647,7 +3648,7 @@ class MultiSetting_Screen(Frame):
 		self.m3_entry = Entry(self.stage3_labelframe_2, 
 						fg = SETTINGPARA_ENTRY_TXT_COLOR, 
 						font = SETTINGPARA_ENTRY_TXT_FONT,
-						bg = SETTINGPARA_LABELFRAME_BGD_COLOR,
+						# bg = SETTINGPARA_LABELFRAME_BGD_COLOR,
 						justify = 'center',
 						width = 3)
 		self.m3_entry.grid(row=0, column=0, sticky='nsew')
@@ -3655,7 +3656,7 @@ class MultiSetting_Screen(Frame):
 
 		self.twodot_label_3 = Label(self.stage3_labelframe_2, 
 							fg = SETTINGPARA_ENTRY_TXT_COLOR, 
-							bg = SETTINGPARA_LABELFRAME_BGD_COLOR, 
+							bg = SETTINGPARA_ENTRY_BGD_COLOR, 
 							font = SETTINGPARA_ENTRY_TXT_FONT,
 							text =':')
 		self.twodot_label_3.grid(row=0, column=1, sticky='nsew')
@@ -3663,7 +3664,7 @@ class MultiSetting_Screen(Frame):
 		self.s3_entry = Entry(self.stage3_labelframe_2, 
 						fg = SETTINGPARA_ENTRY_TXT_COLOR, 
 						font = SETTINGPARA_ENTRY_TXT_FONT,
-						bg = SETTINGPARA_LABELFRAME_BGD_COLOR,
+						# bg = SETTINGPARA_LABELFRAME_BGD_COLOR,
 						justify = 'center',
 						width = 3)
 		self.s3_entry.grid(row=0, column=2, sticky='nsew')
@@ -3671,7 +3672,7 @@ class MultiSetting_Screen(Frame):
 
 		# In work_frame_2
 		self.automail_labelframe = LabelFrame(self.work_frame_2, 
-										bg = MAIN_TITLE_BGD_COLOR, 
+										bg = SETTINGPARA_LABELFRAME_BGD_COLOR, 
 										fg = SETTINGPARA_LABELFRAME_TXT_COLOR, 
 										font = MAIN_MENU_LABELFRAME_TXT_FONT,
 										text = Setting_Language["AutoMail LabelFrame"][language])
