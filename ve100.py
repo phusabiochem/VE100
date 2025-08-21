@@ -304,6 +304,14 @@ working_dir = '/home/pi/VE100'
 parent_dir = '/home/pi'
 result_dir = '/home/pi/Desktop/VE100 Result'
 
+if not os.path.exists('/home/pi/Desktop/VE100 Result'):
+	f = os.path.join("/home/pi/Desktop", "VE100 Result")
+	os.mkdir(f)
+
+if not os.path.exists('/home/pi/VE100'):
+	f = os.path.join("/home/pi/VE100")
+	os.mkdir(f)
+
 # language.txt 
 if not os.path.exists(working_dir + "/language.txt"):
 	fw = open(working_dir + "/language.txt",'w')
