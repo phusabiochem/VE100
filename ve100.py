@@ -1362,7 +1362,7 @@ class SingleRun_Screen(Frame):
 		if(account_active and automail1_is_on):
 			shutil.make_archive(self.base_window.main_menu.result_path, format='zip', root_dir = self.base_window.main_menu.result_path)
 			try:
-				sendmail(self.base_window.multi_setting.recipient_email, 
+				sendmail(self.base_window.single_setting.recipient_email, 
 							self.base_window.main_menu.folderName_set , 
 							'This is an email from VE100 device.',
 							self.base_window.main_menu.result_path_0 + '/' + self.base_window.main_menu.folderName_set + '.zip',
