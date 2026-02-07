@@ -3308,7 +3308,7 @@ class MultiRun_Screen(Frame):
 		print("preview_width: ", self.preview_width)
 		print("preview_height: ", self.preview_height)
 
-		# camera_preview((self.preview_x, self.preview_y, self.preview_width, self.preview_height))
+		camera_preview((self.preview_x, self.preview_y, self.preview_width, self.preview_height))
 		self.stage1_counter()
 
 class SingleSetting_Screen(Frame):
