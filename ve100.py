@@ -58,8 +58,8 @@ SMTP_PORT = 587
 RESULT_IMAGE_WIDTH = 1024
 RESULT_IMAGE_HEIGHT = 768
 
-VOLTAGE_MIN_VALUE = 12
-VOLTAGE_MAX_VALUE = 60
+# VOLTAGE_MIN_VALUE = 12
+# VOLTAGE_MAX_VALUE = 60
 MINUTE_MIN_VALUE = 00
 MINUTE_MAX_VALUE = 99
 SECOND_MIN_VALUE = 00
@@ -187,128 +187,6 @@ CAMMODE_BUTTON_INACTIVE_BGD_COLOR = "grey65"
 CAMMODE_BUTTON_TXT_COLOR = "black"
 CAMMODE_BUTTON_TXT_FONT = ('Arial', 11)
 
-
-############################### Language #################################
-MainScreen_Language = {
-	"SingleStage Button": ["Single Stage", "Đơn bước"],
-	"MultiStage Button": ["Multi Stage", "Đa bước"],
-	"Run Button": ["RUN", "CHẠY"],
-	"BandFinder Button": ["BAND FINDER", "XÁC ĐỊNH BAND"],
-	"Connect Button": ["CONNECT", "KẾT NỐI"],
-	"Language Button": ["LANGUAGE", "NGÔN NGỮ"],
-	"Exit Button": ["EXIT", "THOÁT"],
-	"Run LabelFrame": ["RUN", "CHẠY"],
-	"BandFinder LabelFrame": ["BAND FINDER", "XÁC ĐỊNH BAND"],
-	"Connect LabelFrame": ["CONNECT", "KẾT NỐI"],
-	"Language LabelFrame": ["LANGUAGE", "NGÔN NGỮ"],
-	"Open Button": ["Open", "Mở"],
-	"Save Button": ["Save", "Lưu"],
-	"Check Button": ["Check", "Kiểm tra"],
-	"FirstBand Label": ["First band", "Band trên cùng"],
-	"LastBand Label": ["Last band", "Band dưới cùng"],
-	"BandSize Label": ["Result band", "Band kết quả"],
-
-	"AccountInactive Label": ["LOGIN", "ĐĂNG NHẬP"],
-	"AccountActive Label": ["YOU ARE ALREADY LOGGED IN ✔", "BẠN ĐÃ ĐĂNG NHẬP ✔"],
-	"Password Label": ["Password", "Mật khẩu"],
-	"Email Label": ["Email", "Email"],
-	"HidePass Checkbutton": ["Hide charaters", "Ẩn ký tự"],
-	"Login Button": ["Login", "Đăng nhập"],
-	"Logout Button": ["Logout", "Đăng xuất"],
-	"Save Button": ["Save", "Lưu"],
-
-	"SingleStageFolder LabelFrame": ["[Single Stage]", "[Đơn bước]"],
-	"MultiStageFolder LabelFrame": ["[Multi Stage]", "[Đa bước]"],
-	"FolderName Label": ["Folder name", "Tên thư mục"],
-	"Next Button": ["Next", "Tiếp theo"],
-	"Cancel Button": ["Cancel", "Hủy"],
-	"Electrophoresis Button": ["Electrophoresis", "Điện di"],
-
-	##### Messagebox #####
-	"Exit Confirm": ["Do you want to close the app ?","Bạn có muốn đóng ứng dụng ?"],
-	"FirstBand Entry Empty": ["Please enter First band value", "Xin nhập giá trị Band đầu tiên"],
-	"LastBand Entry Empty": ["Please enter Last band value", "Xin nhập giá trị Band cuối cùng"],
-	"ResultBand Entry Empty": ["Please enter Result band value", "Xin nhập giá trị Band kết quả"],
-	"Band Out Value": ["Band size must be between first and last band value.", "Giá trị band phải ở giữa band đầu tiên và cuối cùng."],
-	"Save Done": ["Saved.", "Đã lưu."],
-	"Login Successful": ["Login Successful", "Đăng nhập thành công"],
-	"Login Unsuccessful": ["An error occurred during login, please try again", "Đã có lỗi xảy ra trong quá trình đăng nhập, xin thử lại"],
-	"Logout Ask": ["Are you sure you want to Logout ?", "Bạn muốn đăng xuất ?"],
-	"FolderName Entry Empty": ["Please enter the folder name", "Xin nhập tên thư mục"],
-	"FolderName Exists": ["This folder already exists, do you want to overwrite it ?", "Thư mục đã tồn tại, bạn có muốn ghi đè ?"],
-	"Email Empty": ["Please enter the email", "Xin hãy nhập email"],
-	"Password Empty": ["Please enter the password", "Xin hãy nhập mật khẩu"],
-	"Email Error": ["Email syntax error", "Lỗi cú pháp email"],
-	"Email Incorrect": ["Your email address was incorrect\rPlease try again !", "Email của bạn không đúng\rXin thử lại !"],
-	"Password Incorrect": ["Your password was incorrect\rPlease try again !", "Mật khẩu của bạn không đúng\rXin thử lại !"],
-	"Language Restart": ["The application needs to be restarted to fully apply the new language. Do you want to restart now ?",
-						"Ứng dụng cần khởi động lại để chuyển đổi hoàn toàn sang ngôn ngữ mới. Bạn có muốn khởi động lại ngay ?"]
-}
-
-SampleNamingScreen_Language = {
-	"Setting Label": ["SETTING", "CÀI ĐẶT"],
-	"Next Button": ["Next", "Tiếp theo"],
-	"Back Button": ["Back", "Trở lại"],
-	"NumberOfWells Label": ["Number of wells", "Số lượng giếng"],
-	"WellNumber Label": ["No.", "Stt"],
-	"WellName Label": ["Sample Names", "Tên mẫu"],
-	##### Messagebox #####
-
-	"WellName Error": ["Well name must be less than 12 characters.\n[Well ", "Tên giếng phải ít hơn 12 ký tự. \n[Giếng "]
-}
-
-Setting_Language = {
-	"Setting Label": ["SETTING", "CÀI ĐẶT"],
-	"Back Button": ["Back", "Trở lại"],
-	"Run Button": ["Run", "Chạy"],
-	"Stage LabelFrame": ["Stage", "Bước"],
-	"VoltageSetting LabelFrame": ["Voltage (DC)", "Điện áp (DC)"],
-	"TimerSetting LabelFrame": ["Timer (min : sec)", "Thời gian (phút : giây)"],
-	"AutoCaptureSetting LabelFrame": ["Auto-Capture Timer (min)", "Thời gian chụp tự động (phút)"],
-	"AutoMail LabelFrame": ["Automatic email sending", "Tự động gửi mail"],
-	"AutoMailOn Button": ["ON", "Bật"],
-	"AutoMailOff Button": ["OFF", "Tắt"],
-	"AutoMailRecipient Label": ["Recipient :", "Người nhận :"],
-	"Save Button": ["Save", "Lưu"],
-
-	"Stage Count": ["Number of Stages", "Số giai đoạn"],
-	"TurnOff Button": ["Turn OFF", "Tắt"],
-	"TurnOn Button": ["Turn ON", "Mở"],
-	##### Messagebox #####
-	"Save Setting": ["Do you want to save the settings ?", "Bạn có muốn lưu cài đặt ?"],
-	"Voltage Empty": ["Please enter all voltage values", "Xin nhập đầy đủ giá trị điện áp"],
-	"Timer Empty": ["Please enter all timer values", "Xin nhập đầy đủ giá trị thời gian"],
-	"AutoCap Empty": ["Please enter Auto-Capture Timer values", "Xin nhập thời gian tự động chụp"],
-	"Saved": ["Saved", "Đã lưu"],
-	"Email Empty": ["Please enter the recipient email", "Xin nhập email người nhận"],
-	"Voltage Overflow Value": ["Voltage must be between " + str(VOLTAGE_MIN_VALUE) + " and " + str(VOLTAGE_MAX_VALUE) + " VDC",
-								"Điện áp phải ở giữa " + str(VOLTAGE_MIN_VALUE) + " và " + str(VOLTAGE_MAX_VALUE) + " VDC"],
-	"Minute Overflow Value": ["Minutes must be between " + str(MINUTE_MIN_VALUE) + " and " + str(MINUTE_MAX_VALUE),
-								"Số phút phải ở giữa " + str(MINUTE_MIN_VALUE) + " và " + str(MINUTE_MAX_VALUE)],
-	"Second Overflow Value": ["Seconds must be between " + str(SECOND_MIN_VALUE) + " and " + str(SECOND_MAX_VALUE),
-								"Số giây phải ở giữa " + str(SECOND_MIN_VALUE) + " và " + str(SECOND_MAX_VALUE)],
-}
-
-Run_Language = {
-	"Run Label": ["ELECTROPHORESIS", "ĐIỆN DI"],
-	"Stage LabelFrame": ["STAGE", "Bước"],
-	"TimeLeft LabelFrame": ["Time left", "Thời gian còn lại"],
-	"VoltageSense Label": ["Voltage:", "Điện áp:"],
-	"CurrentSense Label": ["Current:", "Dòng điện:"],
-	"Capture Button": ["Capture", "Chụp"],
-	"Stop Button": ["STOP", "Dừng"],
-	"Finish Button": ["FINISH", "Kết thúc"],
-	"ViewResult Button": ["View Result", "Xem kết quả"],
-	"CamMode1 Button": ["Mode 1", "Mode 1"],
-	"CamMode2 Button": ["Mode 2", "Mode 2"],
-	"Processing Label": ["Processing\r...", "Đang xử lý\r..."],
-	"Complete Label": ["COMPLETE", "HOÀN THÀNH"],
-	##### Messagebox #####
-
-	"Stop Running": ["Do you want to stop electrophoresis ?", "Bạn có muốn dừng điện di ?"],
-	"Back MainMenu": ["Do you want to go back to the main screen ?", "Bạn có muốn quay lại màn hình chính ?"],
-	"Picture Saved": ["The picture have been saved", "Ảnh đã được lưu"],
-}
 ############################### Check file ##################################
 working_dir = '/home/pi/VE100'
 parent_dir = '/home/pi'
@@ -321,6 +199,37 @@ if not os.path.exists('/home/pi/Desktop/VE100 Result'):
 if not os.path.exists('/home/pi/VE100'):
 	f = os.path.join("/home/pi/VE100")
 	os.mkdir(f)
+
+
+# Voltage_range.json
+VOLTAGE_MIN_VALUE = None
+VOLTAGE_MAX_VALUE = None
+
+def load_voltage_range(working_dir):
+	global VOLTAGE_MIN_VALUE, VOLTAGE_MAX_VALUE
+
+	file_path = os.path.join(working_dir, "voltage_range.json")
+
+	# Nếu chưa tồn tại file -> tạo file với giá trị mặc định
+	if not os.path.exists(file_path):
+		data = {
+			"MAX_VALUE": 60,
+			"MIN_VALUE": 12
+		}
+		with open(file_path, "w", encoding="utf-8") as f:
+			json.dump(data, f, indent=4)
+
+		VOLTAGE_MAX_VALUE = data["MAX_VALUE"]
+		VOLTAGE_MIN_VALUE = data["MIN_VALUE"]
+
+	# Nếu đã tồn tại -> đọc file
+	else:
+		with open(file_path, "r", encoding="utf-8") as f:
+			data = json.load(f)
+
+		VOLTAGE_MAX_VALUE = data.get("MAX_VALUE", 60)
+		VOLTAGE_MIN_VALUE = data.get("MIN_VALUE", 12)
+load_voltage_range(working_dir)
 
 # language.txt 
 if not os.path.exists(working_dir + "/language.txt"):
@@ -525,6 +434,129 @@ else:
 	fr_voltage = open('/home/pi/VE100/.config.txt')
 	DEIVIDE_VOLTAGE_VALUE = float(fr_voltage.readline())
 	fr_voltage.close()
+	
+############################### Language #################################
+MainScreen_Language = {
+	"SingleStage Button": ["Single Stage", "Đơn bước"],
+	"MultiStage Button": ["Multi Stage", "Đa bước"],
+	"Run Button": ["RUN", "CHẠY"],
+	"BandFinder Button": ["BAND FINDER", "XÁC ĐỊNH BAND"],
+	"Connect Button": ["CONNECT", "KẾT NỐI"],
+	"Language Button": ["LANGUAGE", "NGÔN NGỮ"],
+	"Exit Button": ["EXIT", "THOÁT"],
+	"Run LabelFrame": ["RUN", "CHẠY"],
+	"BandFinder LabelFrame": ["BAND FINDER", "XÁC ĐỊNH BAND"],
+	"Connect LabelFrame": ["CONNECT", "KẾT NỐI"],
+	"Language LabelFrame": ["LANGUAGE", "NGÔN NGỮ"],
+	"Open Button": ["Open", "Mở"],
+	"Save Button": ["Save", "Lưu"],
+	"Check Button": ["Check", "Kiểm tra"],
+	"FirstBand Label": ["First band", "Band trên cùng"],
+	"LastBand Label": ["Last band", "Band dưới cùng"],
+	"BandSize Label": ["Result band", "Band kết quả"],
+
+	"AccountInactive Label": ["LOGIN", "ĐĂNG NHẬP"],
+	"AccountActive Label": ["YOU ARE ALREADY LOGGED IN ✔", "BẠN ĐÃ ĐĂNG NHẬP ✔"],
+	"Password Label": ["Password", "Mật khẩu"],
+	"Email Label": ["Email", "Email"],
+	"HidePass Checkbutton": ["Hide charaters", "Ẩn ký tự"],
+	"Login Button": ["Login", "Đăng nhập"],
+	"Logout Button": ["Logout", "Đăng xuất"],
+	"Save Button": ["Save", "Lưu"],
+
+	"SingleStageFolder LabelFrame": ["[Single Stage]", "[Đơn bước]"],
+	"MultiStageFolder LabelFrame": ["[Multi Stage]", "[Đa bước]"],
+	"FolderName Label": ["Folder name", "Tên thư mục"],
+	"Next Button": ["Next", "Tiếp theo"],
+	"Cancel Button": ["Cancel", "Hủy"],
+	"Electrophoresis Button": ["Electrophoresis", "Điện di"],
+
+	##### Messagebox #####
+	"Exit Confirm": ["Do you want to close the app ?","Bạn có muốn đóng ứng dụng ?"],
+	"FirstBand Entry Empty": ["Please enter First band value", "Xin nhập giá trị Band đầu tiên"],
+	"LastBand Entry Empty": ["Please enter Last band value", "Xin nhập giá trị Band cuối cùng"],
+	"ResultBand Entry Empty": ["Please enter Result band value", "Xin nhập giá trị Band kết quả"],
+	"Band Out Value": ["Band size must be between first and last band value.", "Giá trị band phải ở giữa band đầu tiên và cuối cùng."],
+	"Save Done": ["Saved.", "Đã lưu."],
+	"Login Successful": ["Login Successful", "Đăng nhập thành công"],
+	"Login Unsuccessful": ["An error occurred during login, please try again", "Đã có lỗi xảy ra trong quá trình đăng nhập, xin thử lại"],
+	"Logout Ask": ["Are you sure you want to Logout ?", "Bạn muốn đăng xuất ?"],
+	"FolderName Entry Empty": ["Please enter the folder name", "Xin nhập tên thư mục"],
+	"FolderName Exists": ["This folder already exists, do you want to overwrite it ?", "Thư mục đã tồn tại, bạn có muốn ghi đè ?"],
+	"Email Empty": ["Please enter the email", "Xin hãy nhập email"],
+	"Password Empty": ["Please enter the password", "Xin hãy nhập mật khẩu"],
+	"Email Error": ["Email syntax error", "Lỗi cú pháp email"],
+	"Email Incorrect": ["Your email address was incorrect\rPlease try again !", "Email của bạn không đúng\rXin thử lại !"],
+	"Password Incorrect": ["Your password was incorrect\rPlease try again !", "Mật khẩu của bạn không đúng\rXin thử lại !"],
+	"Language Restart": ["The application needs to be restarted to fully apply the new language. Do you want to restart now ?",
+						"Ứng dụng cần khởi động lại để chuyển đổi hoàn toàn sang ngôn ngữ mới. Bạn có muốn khởi động lại ngay ?"]
+}
+
+SampleNamingScreen_Language = {
+	"Setting Label": ["SETTING", "CÀI ĐẶT"],
+	"Next Button": ["Next", "Tiếp theo"],
+	"Back Button": ["Back", "Trở lại"],
+	"NumberOfWells Label": ["Number of wells", "Số lượng giếng"],
+	"WellNumber Label": ["No.", "Stt"],
+	"WellName Label": ["Sample Names", "Tên mẫu"],
+	##### Messagebox #####
+
+	"WellName Error": ["Well name must be less than 12 characters.\n[Well ", "Tên giếng phải ít hơn 12 ký tự. \n[Giếng "]
+}
+
+Setting_Language = {
+	"Setting Label": ["SETTING", "CÀI ĐẶT"],
+	"Back Button": ["Back", "Trở lại"],
+	"Run Button": ["Run", "Chạy"],
+	"Stage LabelFrame": ["Stage", "Bước"],
+	"VoltageSetting LabelFrame": ["Voltage (DC)", "Điện áp (DC)"],
+	"TimerSetting LabelFrame": ["Timer (min : sec)", "Thời gian (phút : giây)"],
+	"AutoCaptureSetting LabelFrame": ["Auto-Capture Timer (min)", "Thời gian chụp tự động (phút)"],
+	"AutoMail LabelFrame": ["Automatic email sending", "Tự động gửi mail"],
+	"AutoMailOn Button": ["ON", "Bật"],
+	"AutoMailOff Button": ["OFF", "Tắt"],
+	"AutoMailRecipient Label": ["Recipient :", "Người nhận :"],
+	"Save Button": ["Save", "Lưu"],
+
+	"Stage Count": ["Number of Stages", "Số giai đoạn"],
+	"TurnOff Button": ["Turn OFF", "Tắt"],
+	"TurnOn Button": ["Turn ON", "Mở"],
+	##### Messagebox #####
+	"Save Setting": ["Do you want to save the settings ?", "Bạn có muốn lưu cài đặt ?"],
+	"Voltage Empty": ["Please enter all voltage values", "Xin nhập đầy đủ giá trị điện áp"],
+	"Timer Empty": ["Please enter all timer values", "Xin nhập đầy đủ giá trị thời gian"],
+	"AutoCap Empty": ["Please enter Auto-Capture Timer values", "Xin nhập thời gian tự động chụp"],
+	"Saved": ["Saved", "Đã lưu"],
+	"Email Empty": ["Please enter the recipient email", "Xin nhập email người nhận"],
+	"Voltage Overflow Value": ["Voltage must be between " + str(VOLTAGE_MIN_VALUE) + " and " + str(VOLTAGE_MAX_VALUE) + " VDC",
+								"Điện áp phải ở giữa " + str(VOLTAGE_MIN_VALUE) + " và " + str(VOLTAGE_MAX_VALUE) + " VDC"],
+	"Minute Overflow Value": ["Minutes must be between " + str(MINUTE_MIN_VALUE) + " and " + str(MINUTE_MAX_VALUE),
+								"Số phút phải ở giữa " + str(MINUTE_MIN_VALUE) + " và " + str(MINUTE_MAX_VALUE)],
+	"Second Overflow Value": ["Seconds must be between " + str(SECOND_MIN_VALUE) + " and " + str(SECOND_MAX_VALUE),
+								"Số giây phải ở giữa " + str(SECOND_MIN_VALUE) + " và " + str(SECOND_MAX_VALUE)],
+}
+
+Run_Language = {
+	"Run Label": ["ELECTROPHORESIS", "ĐIỆN DI"],
+	"Stage LabelFrame": ["STAGE", "Bước"],
+	"TimeLeft LabelFrame": ["Time left", "Thời gian còn lại"],
+	"VoltageSense Label": ["Voltage:", "Điện áp:"],
+	"CurrentSense Label": ["Current:", "Dòng điện:"],
+	"Capture Button": ["Capture", "Chụp"],
+	"Stop Button": ["STOP", "Dừng"],
+	"Finish Button": ["FINISH", "Kết thúc"],
+	"ViewResult Button": ["View Result", "Xem kết quả"],
+	"CamMode1 Button": ["Mode 1", "Mode 1"],
+	"CamMode2 Button": ["Mode 2", "Mode 2"],
+	"Processing Label": ["Processing\r...", "Đang xử lý\r..."],
+	"Complete Label": ["COMPLETE", "HOÀN THÀNH"],
+	##### Messagebox #####
+
+	"Stop Running": ["Do you want to stop electrophoresis ?", "Bạn có muốn dừng điện di ?"],
+	"Back MainMenu": ["Do you want to go back to the main screen ?", "Bạn có muốn quay lại màn hình chính ?"],
+	"Picture Saved": ["The picture have been saved", "Ảnh đã được lưu"],
+}
+
 
 
 # ADS1115 - START
@@ -2310,6 +2342,11 @@ class MultiRun_Screen(Frame):
 				GPIO.output(RELAY_PIN, GPIO.LOW)
 				GPIO.output(RUN_LED_PIN, GPIO.LOW)
 				uart_send(0, 0)
+
+				#Set Label
+				self.vsenseValue_label.config(text = "0 V")
+				# ~ self.isenseValue_label.config(text = "0 A")
+				self.isenseValue_label.config(text = "")
 				
 			self.stage1_start = 0
 			self.stage1_labelframe['bg'] = RUNSTAGE_LABELFRAME_ACTIVE_BGD_COLOR
@@ -2322,7 +2359,8 @@ class MultiRun_Screen(Frame):
 		self.m1_label.config(text = str('%02d'%self.m1_curent)) # update minute label
 
 		# read Voltage & Current feedback here
-		self.readFeebackValue()
+		if(self.voltage_set[0] > 0):
+			self.readFeebackValue()
 
 		send_data = '\rSTATUS\r'
 		ser.write(send_data.encode())
@@ -2368,6 +2406,11 @@ class MultiRun_Screen(Frame):
 				GPIO.output(RELAY_PIN, GPIO.LOW)
 				GPIO.output(RUN_LED_PIN, GPIO.LOW)
 				uart_send(0, 0)
+
+				#Set Label
+				self.vsenseValue_label.config(text = "0 V")
+				# ~ self.isenseValue_label.config(text = "0 A")
+				self.isenseValue_label.config(text = "")
 				
 			self.stage2_start = 0
 
@@ -2379,7 +2422,8 @@ class MultiRun_Screen(Frame):
 		self.m2_label.config(text = str('%02d'%self.m2_curent)) # update minute label
 
 		# read Voltage & Current feedback here
-		self.readFeebackValue()
+		if(self.voltage_set[1] > 0):
+			self.readFeebackValue()
 
 		send_data = '\rSTATUS\r'
 		ser.write(send_data.encode())
@@ -2425,6 +2469,11 @@ class MultiRun_Screen(Frame):
 				GPIO.output(RUN_LED_PIN, GPIO.LOW)
 				uart_send(0, 0)
 
+				#Set Label
+				self.vsenseValue_label.config(text = "0 V")
+				# ~ self.isenseValue_label.config(text = "0 A")
+				self.isenseValue_label.config(text = "")
+
 			self.stage3_start = 0
 			
 
@@ -2436,7 +2485,8 @@ class MultiRun_Screen(Frame):
 		self.m3_label.config(text = str('%02d'%self.m3_curent)) # update minute label
 
 		# read Voltage & Current feedback here
-		self.readFeebackValue()
+		if(self.voltage_set[2] > 0):
+			self.readFeebackValue()
 
 		send_data = '\rSTATUS\r'
 		ser.write(send_data.encode())
@@ -2481,6 +2531,11 @@ class MultiRun_Screen(Frame):
 				GPIO.output(RUN_LED_PIN, GPIO.LOW)
 				uart_send(0, 0)
 
+				#Set Label
+				self.vsenseValue_label.config(text = "0 V")
+				# ~ self.isenseValue_label.config(text = "0 A")
+				self.isenseValue_label.config(text = "")
+
 			self.stage4_start = 0
 			
 
@@ -2492,7 +2547,8 @@ class MultiRun_Screen(Frame):
 		self.m4_label.config(text = str('%02d'%self.m4_curent)) # update minute label
 
 		# read Voltage & Current feedback here
-		self.readFeebackValue()
+		if(self.voltage_set[3] > 0):
+			self.readFeebackValue()
 
 		send_data = '\rSTATUS\r'
 		ser.write(send_data.encode())
@@ -2537,6 +2593,11 @@ class MultiRun_Screen(Frame):
 				GPIO.output(RUN_LED_PIN, GPIO.LOW)
 				uart_send(0, 0)
 
+				#Set Label
+				self.vsenseValue_label.config(text = "0 V")
+				# ~ self.isenseValue_label.config(text = "0 A")
+				self.isenseValue_label.config(text = "")
+
 			self.stage5_start = 0
 			
 		self.s5_curent = self.s5_curent - 1
@@ -2547,7 +2608,8 @@ class MultiRun_Screen(Frame):
 		self.m5_label.config(text = str('%02d'%self.m5_curent)) # update minute label
 
 		# read Voltage & Current feedback here
-		self.readFeebackValue()
+		if(self.voltage_set[4] > 0):
+			self.readFeebackValue()
 
 		send_data = '\rSTATUS\r'
 		ser.write(send_data.encode())
@@ -3781,7 +3843,7 @@ class MultiSetting_Screen(Frame):
 		).grid(row=0, column=0, sticky="w", padx=(5, 5))
 
 		self.stage_count_var = IntVar(value=PARAMETERS["stage_count"])
-		Spinbox(
+		self.stage_spinbox = Spinbox(
 			self.work_frame_1,
 			from_=1,
 			to=5,
@@ -3790,7 +3852,12 @@ class MultiSetting_Screen(Frame):
 			justify="center",
 			textvariable=self.stage_count_var,
 			command=self.update_stage_ui
-		).grid(row=0, column=1, sticky="w", padx=(0, 5))
+		)
+		self.stage_spinbox.grid(row=0, column=1, sticky="w", padx=(0, 5))
+
+		self.stage_spinbox.bind("<Return>", lambda e: self.update_stage_ui())
+		self.stage_spinbox.bind("<KP_Enter>", lambda e: self.update_stage_ui())
+
 
 		self.stage1_labelframe = LabelFrame(self.work_frame_2, 
 										bg = BUTTON_FRAME_BGD_COLOR,
