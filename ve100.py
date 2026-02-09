@@ -564,8 +564,8 @@ i2c = busio.I2C(3, 2)
 ads = ADS.ADS1115(i2c)
 
 # DS1307
-i2c_2 = board.I2C()
-rtc = adafruit_ds1307.DS1307(i2c_2)
+# ~ i2c_2 = board.I2C()
+# ~ rtc = adafruit_ds1307.DS1307(i2c_2)
 
 # CAMERA - START
 camera = PiCamera(framerate = 1, sensor_mode = 3)
