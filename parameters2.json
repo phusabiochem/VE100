@@ -3,51 +3,51 @@
     "stages": {
         "stage_1": {
             "voltage": {
+                "value": 60,
+                "enabled": false
+            },
+            "timer": {
+                "minute": 0,
+                "second": 30
+            }
+        },
+        "stage_2": {
+            "voltage": {
                 "value": 30,
                 "enabled": false
             },
             "timer": {
                 "minute": 0,
-                "second": 10
-            }
-        },
-        "stage_2": {
-            "voltage": {
-                "value": 0,
-                "enabled": true
-            },
-            "timer": {
-                "minute": 0,
-                "second": 10
+                "second": 30
             }
         },
         "stage_3": {
             "voltage": {
-                "value": 45,
+                "value": 50,
                 "enabled": false
             },
             "timer": {
                 "minute": 0,
-                "second": 10
+                "second": 30
             }
         },
         "stage_4": {
             "voltage": {
-                "value": 0,
-                "enabled": true
+                "value": 60,
+                "enabled": false
             },
             "timer": {
-                "minute": 1,
+                "minute": 5,
                 "second": 10
             }
         },
         "stage_5": {
             "voltage": {
-                "value": 0,
-                "enabled": true
+                "value": 60,
+                "enabled": false
             },
             "timer": {
-                "minute": 1,
+                "minute": 5,
                 "second": 10
             }
         }
