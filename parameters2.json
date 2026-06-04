@@ -1,5 +1,5 @@
 {
-    "stage_count": 3,
+    "stage_count": 5,
     "stages": {
         "stage_1": {
             "voltage": {
@@ -7,27 +7,27 @@
                 "enabled": false
             },
             "timer": {
-                "minute": 0,
+                "minute": 5,
                 "second": 30
             }
         },
         "stage_2": {
             "voltage": {
-                "value": 30,
+                "value": 60,
                 "enabled": false
             },
             "timer": {
-                "minute": 0,
+                "minute": 5,
                 "second": 30
             }
         },
         "stage_3": {
             "voltage": {
-                "value": 50,
+                "value": 60,
                 "enabled": false
             },
             "timer": {
-                "minute": 0,
+                "minute": 5,
                 "second": 30
             }
         },
@@ -53,7 +53,7 @@
         }
     },
     "automail": {
-        "enabled": 0,
-        "recipient": ""
+        "enabled": 1,
+        "recipient": "qtk0608@gmail.com"
     }
 }
