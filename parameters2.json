@@ -53,7 +53,7 @@
         }
     },
     "automail": {
-        "enabled": 1,
-        "recipient": "tuanletl007@gmail.com"
+        "enabled": 0,
+        "recipient": ""
     }
 }
