@@ -1,15 +1,36 @@
-# -*- mode: python ; coding: utf-8 -*-
 
+# -*- mode: python ; coding: utf-8 -*-
+from PyInstaller.utils.hooks import copy_metadata, collect_data_files, collect_submodules
+
+# Lấy metadata và submodules của google-auth
+datas_auth = copy_metadata('google-auth')
+datas_oauth = copy_metadata('google-auth-oauthlib')
+
+hidden_google = collect_submodules('google.auth') + collect_submodules('google_auth_oauthlib')
 
 block_cipher = None
 
-
 a = Analysis(
     ['ve100.py'],
-    pathex=[],
+    pathex=['/home/pi/VE100'],
     binaries=[],
-    datas=[],
-    hiddenimports=['PIL','PIL._imagingtk','PIL._tkinter_finder'],
+    datas=datas_auth + datas_oauth,
+    hiddenimports=[
+        'ipaddress',
+        'urllib',
+        'urllib.parse',
+        'pathlib',
+        'six',
+        'PIL',
+        'PIL._imagingtk',
+        'PIL._tkinter_finder',
+        'google',
+        'google.auth',
+        'google.auth.transport',
+        'google.auth.transport.requests',
+        'google.oauth2',
+        'google_auth_oauthlib',
+    ] + hidden_google,
     hookspath=[],
     hooksconfig={},
     runtime_hooks=[],
